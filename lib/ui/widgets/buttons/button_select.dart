@@ -29,6 +29,7 @@ class SelectButton extends StatelessWidget {
             color: isSelected ? Colors.white : Color(0xFF868686),
             fontSize: 16,
             fontWeight: FontWeight.w500,
+
           ),
         ),
       ),
