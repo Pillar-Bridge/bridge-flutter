@@ -1,6 +1,7 @@
+import 'package:bridge_flutter/ui/widgets/buttons/button_select.dart';
 import 'package:flutter/material.dart';
 
-import '../widgets/buttons.dart';
+import '../widgets/buttons/button_basic.dart';
 
 class CommonWidgetScreen extends StatelessWidget {
   @override
@@ -16,10 +17,52 @@ class CommonWidgetScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: BasicButton(
-                label: '테스트 버튼임',
+                label: '기본 버튼',
                 onPressed: () {
                   // 버튼 클릭 시 수행할 작업
                   print('Button clicked!');
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SelectButton(
+                label: '선택형 - 선택 안함',
+                onPressed: () {
+                  // 버튼 클릭 시 수행할 작업
+                  print('Another button clicked!');
+                },
+                isSelected: false,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SelectButton(
+                label: '선택형 - 선택 함',
+                onPressed: () {
+                  // 버튼 클릭 시 수행할 작업
+                  print('More buttons clicked!');
+                },
+                isSelected: true,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: BasicButton(
+                label: '추가 버튼 1',
+                onPressed: () {
+                  // 버튼 클릭 시 수행할 작업
+                  print('Additional button 1 clicked!');
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: BasicButton(
+                label: '추가 버튼 2',
+                onPressed: () {
+                  // 버튼 클릭 시 수행할 작업
+                  print('Additional button 2 clicked!');
                 },
               ),
             ),
