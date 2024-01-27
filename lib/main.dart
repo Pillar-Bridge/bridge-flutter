@@ -1,4 +1,7 @@
-import 'package:bridge_flutter/screens/select_place_screen.dart';
+import 'package:bridge_flutter/ui/constants/app_theme.dart';
+import 'package:bridge_flutter/ui/screens/common_widget_test_screen.dart';
+import 'package:bridge_flutter/ui/screens/select_place_screen.dart';
+import 'package:bridge_flutter/ui/widgets/buttons.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,10 +14,12 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: AppThemeData.basicThemeData,
       title: 'Bridge',
-      initialRoute: '/',
+      initialRoute: '/common_widget_test',
       routes: {
         '/': (context) => const SelectPlaceScreen(),
+        '/common_widget_test': (context) => CommonWidgetScreen(),
       },
     );
   }
