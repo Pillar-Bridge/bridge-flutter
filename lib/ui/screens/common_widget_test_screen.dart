@@ -1,6 +1,7 @@
 import 'package:bridge_flutter/ui/widgets/buttons/button_basic_icon.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_select_sentence.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
-import 'package:bridge_flutter/ui/widgets/buttons/button_select.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_text.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_word_replacement.dart';
 import 'package:flutter/material.dart';
 import 'package:bridge_flutter/ui/widgets/progresses/progress_threedots.dart';
@@ -33,7 +34,7 @@ class CommonWidgetScreen extends StatelessWidget {
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: SelectButton(
+                  child: TextToggleButton(
                     label: '선택형 - 선택 안함',
                     onPressed: () {
                       // 버튼 클릭 시 수행할 작업
@@ -44,7 +45,7 @@ class CommonWidgetScreen extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: SelectButton(
+                  child: TextToggleButton(
                     label: '선택형 - 선택 함',
                     onPressed: () {
                       // 버튼 클릭 시 수행할 작업
@@ -113,6 +114,16 @@ class CommonWidgetScreen extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SelectSentenceButton(
+                label: '차가운 아메리카노 주세요.',
+                onPressed: () {
+                  // 버튼 클릭 시 수행할 작업
+                  print('Another button clicked!');
+                },
+              ),
             ),
           ],
         ),
