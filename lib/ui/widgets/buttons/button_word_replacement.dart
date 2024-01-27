@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class SelectButton extends StatelessWidget {
+class WordReplacementButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
   final bool isSelected; // New parameter
 
-  const SelectButton({
+  const WordReplacementButton({
     Key? key,
     required this.label,
     required this.onPressed,
@@ -17,11 +17,11 @@ class SelectButton extends StatelessWidget {
     return SizedBox(
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            horizontal: 16, vertical: 10), // Updated padding
+            horizontal: 20, vertical: 10), // Updated padding
         child: OutlinedButton(
           onPressed: onPressed,
           style: OutlinedButton.styleFrom(
-            backgroundColor: isSelected ? Colors.black : Colors.white,
+            backgroundColor: Colors.white,
             side: isSelected
                 ? BorderSide.none
                 : const BorderSide(width: 1.0, color: Color(0xFFF8F8F8)),
@@ -33,9 +33,9 @@ class SelectButton extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.white : Color(0xFF868686),
+              color: isSelected ? Color(0xFF3787FF) : Color(0xFF595959),
               fontSize: 16,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:bridge_flutter/ui/widgets/buttons/button_basic_icon.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_select.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_word_replacement.dart';
 import 'package:flutter/material.dart';
 import 'package:bridge_flutter/ui/widgets/progresses/progress_threedots.dart';
 
@@ -27,27 +28,32 @@ class CommonWidgetScreen extends StatelessWidget {
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SelectButton(
-                label: '선택형 - 선택 안함',
-                onPressed: () {
-                  // 버튼 클릭 시 수행할 작업
-                  print('Another button clicked!');
-                },
-                isSelected: false,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SelectButton(
-                label: '선택형 - 선택 함',
-                onPressed: () {
-                  // 버튼 클릭 시 수행할 작업
-                  print('More buttons clicked!');
-                },
-                isSelected: true,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SelectButton(
+                    label: '선택형 - 선택 안함',
+                    onPressed: () {
+                      // 버튼 클릭 시 수행할 작업
+                      print('Another button clicked!');
+                    },
+                    isSelected: false,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SelectButton(
+                    label: '선택형 - 선택 함',
+                    onPressed: () {
+                      // 버튼 클릭 시 수행할 작업
+                      print('More buttons clicked!');
+                    },
+                    isSelected: true,
+                  ),
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -81,7 +87,33 @@ class CommonWidgetScreen extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: ProgressThreeDots(),
             ),
-            // 다른 공용 위젯들을 여기에 추가
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: WordReplacementButton(
+                    label: '단어1',
+                    onPressed: () {
+                      // 버튼 클릭 시 수행할 작업
+                      print('Another button clicked!');
+                    },
+                    isSelected: true,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: WordReplacementButton(
+                    label: '단어2',
+                    onPressed: () {
+                      // 버튼 클릭 시 수행할 작업
+                      print('Another button clicked!');
+                    },
+                    isSelected: false,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
