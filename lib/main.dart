@@ -1,4 +1,4 @@
-import 'package:bridge_flutter/screens/select_place_screen.dart';
+import 'package:bridge_flutter/ui/screens/select_place_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
