@@ -1,4 +1,6 @@
+import 'package:bridge_flutter/ui/screens/select_answer_screen.dart';
 import 'package:bridge_flutter/ui/screens/select_place_screen.dart';
+import 'package:bridge_flutter/ui/screens/voice_recognition_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,6 +17,8 @@ class MainApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const SelectPlaceScreen(),
+        '/voice': (context) => const VoiceRecognitionScreen(),
+        '/answer': (context) => const SelectAnswerScreen()
       },
     );
   }
