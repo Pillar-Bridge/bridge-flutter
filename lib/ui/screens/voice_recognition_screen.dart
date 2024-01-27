@@ -1,4 +1,5 @@
 import 'package:bridge_flutter/ui/screens/select_answer_screen.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
 import 'package:flutter/material.dart';
 
 enum ListeningState { ready, listening, waiting, finished }
@@ -67,61 +68,38 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
           ),
         ),
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          borderRadius: BorderRadius.circular(28),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        margin: EdgeInsets.only(right: 20, bottom: 20),
-        child: InkWell(
-          onTap: () {
-            setState(() {
-              if (_listeningState == ListeningState.ready) {
-                _listeningState = ListeningState.listening;
+      floatingActionButton: IconToggleButton(
+        toggleColor: Color(0xFF3787FF),
+        icon: _listeningState == ListeningState.ready ? Icons.mic : Icons.stop,
+        label: _listeningState == ListeningState.ready ? '듣기' : '중지',
+        isToggled: _listeningState != ListeningState.ready,
+        onPressed: () {
+          setState(() {
+            if (_listeningState == ListeningState.ready) {
+              _listeningState = ListeningState.listening;
+
+              Future.delayed(Duration(seconds: 3), () {
+                setState(() {
+                  _listeningState = ListeningState.waiting;
+                });
 
                 Future.delayed(Duration(seconds: 3), () {
                   setState(() {
-                    _listeningState = ListeningState.waiting;
+                    _listeningState = ListeningState.finished;
                   });
 
-                  Future.delayed(Duration(seconds: 3), () {
-                    setState(() {
-                      _listeningState = ListeningState.finished;
-                    });
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SelectAnswerScreen()),
-                    );
-                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SelectAnswerScreen()),
+                  );
                 });
-              } else if (_listeningState == ListeningState.listening) {
-                _listeningState = ListeningState.ready;
-              }
-            });
-          },
-          child: AnimatedSwitcher(
-            duration: Duration(milliseconds: 200),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return ScaleTransition(child: child, scale: animation);
-            },
-            child: Row(
-              key: ValueKey<bool>(_listeningState == ListeningState.listening),
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                    _listeningState == ListeningState.ready
-                        ? Icons.mic
-                        : Icons.stop,
-                    color: Colors.white),
-                SizedBox(width: 10),
-                Text(_listeningState == ListeningState.ready ? '듣기' : '중지',
-                    style: TextStyle(color: Colors.white)),
-              ],
-            ),
-          ),
-        ),
+              });
+            } else if (_listeningState != ListeningState.ready) {
+              _listeningState = ListeningState.ready;
+            }
+          });
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );

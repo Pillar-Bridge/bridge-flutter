@@ -15,24 +15,20 @@ class SelectButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: 16, vertical: 10), // Updated padding
-        child: OutlinedButton(
-          onPressed: onPressed,
-          style: OutlinedButton.styleFrom(
-            backgroundColor: isSelected ? Colors.black : Colors.white,
-            side: isSelected
-                ? BorderSide.none
-                : BorderSide(width: 1.0, color: Color(0xFFF8F8F8)),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? Colors.white : Color(0xFF868686),
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: isSelected ? Colors.black : Colors.white,
+          side: isSelected
+              ? BorderSide.none
+              : BorderSide(width: 1.0, color: Color(0xFFF8F8F8)),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Color(0xFF868686),
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),

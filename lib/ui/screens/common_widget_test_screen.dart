@@ -1,5 +1,6 @@
 import 'package:bridge_flutter/ui/widgets/buttons/button_icon.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_select.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/buttons/button_basic.dart';
