@@ -1,3 +1,4 @@
+import 'package:bridge_flutter/ui/widgets/buttons/button_icon.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_select.dart';
 import 'package:flutter/material.dart';
 
@@ -48,22 +49,22 @@ class CommonWidgetScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: BasicButton(
-                label: '추가 버튼 1',
-                onPressed: () {
-                  // 버튼 클릭 시 수행할 작업
-                  print('Additional button 1 clicked!');
-                },
+              child: IconToggleButton(
+                icon: Icons.pause_rounded,
+                toggleColor: Color(0xFF3787FF),
+                isToggled: true,
+                label: '토글됨',
+                onPressed: () {},
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: BasicButton(
-                label: '추가 버튼 2',
-                onPressed: () {
-                  // 버튼 클릭 시 수행할 작업
-                  print('Additional button 2 clicked!');
-                },
+              child: IconToggleButton(
+                icon: Icons.hearing,
+                toggleColor: Color(0xFF3787FF),
+                isToggled: false,
+                label: '토글 안됨',
+                onPressed: () {},
               ),
             ),
             // 다른 공용 위젯들을 여기에 추가
