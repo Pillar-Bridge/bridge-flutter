@@ -37,7 +37,7 @@ class _DotState extends State<Dot> with SingleTickerProviderStateMixin {
       duration: Duration(milliseconds: 750),
     );
 
-    _animation = Tween<double>(begin: 0.0, end: 12.0).animate(CurvedAnimation(
+    _animation = Tween<double>(begin: 0.0, end: 10.0).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
     ))
