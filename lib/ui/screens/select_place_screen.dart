@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bridge_flutter/ui/screens/voice_recognition_screen.dart';
 
 class SelectPlaceScreen extends StatefulWidget {
   const SelectPlaceScreen({super.key});
@@ -8,6 +9,13 @@ class SelectPlaceScreen extends StatefulWidget {
 }
 
 class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
+  void _navigateToVoiceRecognitionScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => VoiceRecognitionScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,6 +65,7 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
         child: ElevatedButton(
           onPressed: () {
             // 버튼 클릭시 행동
+            _navigateToVoiceRecognitionScreen();
           },
           child: Text('선택한 장소로 시작하기'),
         ),
