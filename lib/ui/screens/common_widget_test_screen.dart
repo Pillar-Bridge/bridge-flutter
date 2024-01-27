@@ -1,4 +1,5 @@
 import 'package:bridge_flutter/ui/widgets/buttons/button_basic_icon.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_select_sentence.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_text.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
@@ -114,6 +115,16 @@ class CommonWidgetScreen extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SelectSentenceButton(
+                label: '차가운 아메리카노 주세요.',
+                onPressed: () {
+                  // 버튼 클릭 시 수행할 작업
+                  print('Another button clicked!');
+                },
+              ),
             ),
           ],
         ),
