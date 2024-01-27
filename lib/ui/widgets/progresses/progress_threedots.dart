@@ -7,9 +7,9 @@ class ProgressThreeDots extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Dot(delay: Duration(milliseconds: 0)),
-        SizedBox(width: 8),
+        SizedBox(width: 20),
         Dot(delay: Duration(milliseconds: 250)),
-        SizedBox(width: 8),
+        SizedBox(width: 20),
         Dot(delay: Duration(milliseconds: 500)),
       ],
     );
@@ -37,7 +37,7 @@ class _DotState extends State<Dot> with SingleTickerProviderStateMixin {
       duration: Duration(milliseconds: 750),
     );
 
-    _animation = Tween<double>(begin: 0.0, end: 8.0).animate(CurvedAnimation(
+    _animation = Tween<double>(begin: 0.0, end: 12.0).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
     ))
@@ -68,8 +68,8 @@ class _DotState extends State<Dot> with SingleTickerProviderStateMixin {
         return Transform.translate(
           offset: Offset(0, -_animation.value),
           child: Container(
-            width: 8,
-            height: 8,
+            width: 10,
+            height: 10,
             decoration: BoxDecoration(
               color: Colors.black,
               shape: BoxShape.circle,
