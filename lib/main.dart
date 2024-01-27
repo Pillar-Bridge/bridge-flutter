@@ -22,7 +22,7 @@ class MainApp extends StatelessWidget {
       routes: {
         '/': (context) => const SelectPlaceScreen(),
         '/voice': (context) => const VoiceRecognitionScreen(),
-        '/answer': (context) => const SelectAnswerScreen()
+        '/answer': (context) => const SelectAnswerScreen(),
         '/common_widget_test': (context) => CommonWidgetScreen(),
       },
     );
