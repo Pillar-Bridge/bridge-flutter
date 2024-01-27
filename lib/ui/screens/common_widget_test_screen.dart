@@ -1,4 +1,5 @@
-import 'package:bridge_flutter/ui/widgets/buttons/button_icon.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_basic_icon.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_select.dart';
 import 'package:flutter/material.dart';
 
@@ -64,6 +65,14 @@ class CommonWidgetScreen extends StatelessWidget {
                 toggleColor: Color(0xFF3787FF),
                 isToggled: false,
                 label: '토글 안됨',
+                onPressed: () {},
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: IconBasicButton(
+                icon: Icons.keyboard,
+                label: '아이콘 버튼',
                 onPressed: () {},
               ),
             ),
