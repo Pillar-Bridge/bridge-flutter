@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class SelectButton extends StatelessWidget {
+class TextToggleButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
   final bool isSelected; // New parameter
 
-  const SelectButton({
+  const TextToggleButton({
     Key? key,
     required this.label,
     required this.onPressed,
@@ -29,7 +29,6 @@ class SelectButton extends StatelessWidget {
             color: isSelected ? Colors.white : Color(0xFF868686),
             fontSize: 16,
             fontWeight: FontWeight.w500,
-
           ),
         ),
       ),

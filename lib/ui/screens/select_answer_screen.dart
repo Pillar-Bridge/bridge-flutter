@@ -1,4 +1,5 @@
-import 'package:bridge_flutter/ui/widgets/buttons/button_select.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_basic_icon.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_text.dart';
 import 'package:flutter/material.dart';
 
 class SelectAnswerScreen extends StatefulWidget {
@@ -9,6 +10,43 @@ class SelectAnswerScreen extends StatefulWidget {
 }
 
 class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
+  final _controller = TextEditingController();
+
+  void _openTextInput() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // 모달의 크기를 내용에 맞게 조절
+            children: [
+              ListTile(
+                title: TextField(
+                  controller: _controller,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    labelText: '직접 입력',
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                child: Text('완료'),
+                onPressed: () {
+                  setState(() {
+                    // TextField의 내용을 상태로 설정
+                    // IconBasicButton의 라벨을 업데이트
+                  });
+                  Navigator.pop(context); // 모달 닫기
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,34 +78,36 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  SelectButton(
+                  TextToggleButton(
                     label: '차가운 아메리카노 주세요.',
                     onPressed: () {},
                     isSelected: false,
                   ),
                   SizedBox(height: 20),
-                  SelectButton(
+                  TextToggleButton(
                     label: '언제까지 영업하시나요?',
                     onPressed: () {},
                     isSelected: false,
                   ),
                   SizedBox(height: 20),
-                  SelectButton(
+                  TextToggleButton(
                     label: '먹고갈 수 있나요?',
                     onPressed: () {},
                     isSelected: false,
                   ),
                   SizedBox(height: 20),
-                  SelectButton(
+                  TextToggleButton(
                     label: '화장실이 어디에요?',
                     onPressed: () {},
                     isSelected: false,
                   ),
                   SizedBox(height: 20),
-                  SelectButton(
-                    label: '직접 입력',
-                    onPressed: () {},
-                    isSelected: true,
+                  IconBasicButton(
+                    label: _controller.text.isEmpty ? '직접입력' : _controller.text,
+                    icon: Icons.keyboard,
+                    onPressed: _openTextInput,
+                    color: Colors.white,
+                    backgroundColor: Colors.black,
                   ),
                 ],
               ),

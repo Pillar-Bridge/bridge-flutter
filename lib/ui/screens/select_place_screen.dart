@@ -1,5 +1,5 @@
 import 'package:bridge_flutter/ui/widgets/buttons/button_basic.dart';
-import 'package:bridge_flutter/ui/widgets/buttons/button_select.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_text.dart';
 import 'package:flutter/material.dart';
 import 'package:bridge_flutter/ui/screens/voice_recognition_screen.dart';
 
@@ -63,7 +63,7 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                   children: labels.asMap().entries.map((entry) {
                     int index = entry.key;
                     String label = entry.value;
-                    return SelectButton(
+                    return TextToggleButton(
                       isSelected: selectedIndex == index,
                       label: label,
                       onPressed: () {
