@@ -1,4 +1,5 @@
 import 'package:bridge_flutter/ui/widgets/buttons/button_basic_icon.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_select_sentence.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_text.dart';
 import 'package:flutter/material.dart';
 
@@ -78,28 +79,24 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  TextToggleButton(
+                  SelectSentenceButton(
                     label: '차가운 아메리카노 주세요.',
                     onPressed: () {},
-                    isSelected: false,
                   ),
                   SizedBox(height: 20),
-                  TextToggleButton(
+                  SelectSentenceButton(
                     label: '언제까지 영업하시나요?',
                     onPressed: () {},
-                    isSelected: false,
                   ),
                   SizedBox(height: 20),
-                  TextToggleButton(
+                  SelectSentenceButton(
                     label: '먹고갈 수 있나요?',
                     onPressed: () {},
-                    isSelected: false,
                   ),
                   SizedBox(height: 20),
-                  TextToggleButton(
+                  SelectSentenceButton(
                     label: '화장실이 어디에요?',
                     onPressed: () {},
-                    isSelected: false,
                   ),
                   SizedBox(height: 20),
                   IconBasicButton(
