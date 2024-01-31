@@ -1,4 +1,5 @@
 import 'package:bridge_flutter/ui/screens/select_answer_screen.dart';
+import 'package:bridge_flutter/ui/screens/voice_setting_screen.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
 import 'package:flutter/material.dart';
 
@@ -38,9 +39,13 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     IconButton(
-                      icon: Icon(Icons.more_horiz),
+                      icon: const Icon(Icons.more_horiz),
                       onPressed: () {
-                        // TODO: Implement button action
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => VoiceSettingScreen()),
+                        );
                       },
                     ),
                   ],
