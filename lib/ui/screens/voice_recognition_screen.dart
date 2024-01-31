@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:bridge_flutter/ui/screens/select_answer_screen.dart';
 import 'package:bridge_flutter/ui/screens/voice_setting_screen.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
+import 'package:bridge_flutter/ui/widgets/progresses/progress_threedots.dart';
 import 'package:flutter/material.dart';
 
 enum ListeningState { ready, listening, waiting, finished }
@@ -14,6 +17,7 @@ class VoiceRecognitionScreen extends StatefulWidget {
 
 class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
   ListeningState _listeningState = ListeningState.ready;
+  Timer? _timer;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +35,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
         ),
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.only(left: 24, right: 24),
+            padding: const EdgeInsets.only(left: 24, right: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -50,24 +54,24 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                     ),
                   ],
                 ),
-                Text(
-                  _listeningState == ListeningState.ready
-                      ? '상대방의 말이 이곳에 표시됩니다.'
-                      : _listeningState == ListeningState.listening
-                          ? '목소리를 듣고 있는 중입니다...'
-                          : _listeningState == ListeningState.waiting
-                              ? '...'
-                              : _listeningState == ListeningState.finished
-                                  ? '완료'
-                                  : '',
-                  style: TextStyle(
-                    color: _listeningState == ListeningState.ready
-                        ? Color(0xFFB4B4B4)
-                        : null,
-                    fontSize: 40,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                _listeningState == ListeningState.waiting
+                    ? ProgressThreeDots()
+                    : Text(
+                        _listeningState == ListeningState.ready
+                            ? '상대방의 말이 이곳에 표시됩니다.'
+                            : _listeningState == ListeningState.listening
+                                ? '목소리를 듣고 있는 중입니다...'
+                                : _listeningState == ListeningState.finished
+                                    ? '완료'
+                                    : '',
+                        style: TextStyle(
+                          color: _listeningState == ListeningState.ready
+                              ? Color(0xFFB4B4B4)
+                              : null,
+                          fontSize: 40,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
               ],
             ),
           ),
@@ -83,12 +87,12 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
             if (_listeningState == ListeningState.ready) {
               _listeningState = ListeningState.listening;
 
-              Future.delayed(Duration(seconds: 3), () {
+              _timer = Timer(Duration(seconds: 3), () {
                 setState(() {
                   _listeningState = ListeningState.waiting;
                 });
 
-                Future.delayed(Duration(seconds: 3), () {
+                _timer = Timer(Duration(seconds: 3), () {
                   setState(() {
                     _listeningState = ListeningState.finished;
                   });
@@ -101,6 +105,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                 });
               });
             } else if (_listeningState != ListeningState.ready) {
+              _timer?.cancel();
               _listeningState = ListeningState.ready;
             }
           });
