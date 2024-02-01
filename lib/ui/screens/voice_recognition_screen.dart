@@ -21,6 +21,25 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
   String recordedText = '';
   List<String> conversationList = [];
 
+  // SelectAnswerScreen으로 이동하는 함수
+  void _navigateToSelectAnswerScreen() async {
+    final updatedList = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            SelectAnswerScreen(conversationList: conversationList),
+      ),
+    );
+
+    if (updatedList != null) {
+      setState(() {
+        conversationList = List<String>.from(updatedList);
+      });
+    }
+
+    _listeningState = ListeningState.ready;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,21 +77,55 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                 ),
                 _listeningState == ListeningState.waiting
                     ? ProgressThreeDots()
-                    : Text(
-                        _listeningState == ListeningState.ready
-                            ? '상대방의 말이 이곳에 표시됩니다.'
-                            : _listeningState == ListeningState.listening
-                                ? '목소리를 듣고 있는 중입니다...'
-                                : _listeningState == ListeningState.finished
-                                    ? '완료'
-                                    : '',
-                        style: TextStyle(
-                          color: _listeningState == ListeningState.ready
-                              ? Color(0xFFB4B4B4)
-                              : null,
-                          fontSize: 40,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    : Expanded(
+                        child: _listeningState == ListeningState.ready &&
+                                conversationList.isNotEmpty
+                            // 대화 목록이 있을 때 마지막 대화를 표시
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (conversationList.length > 1)
+                                    // 음성인식 된 내용
+                                    Text(
+                                      conversationList[
+                                          conversationList.length - 2],
+                                      style: TextStyle(
+                                        color: Colors.grey[300],
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  if (conversationList.isNotEmpty)
+                                    // 선택한 답변
+                                    Text(
+                                      conversationList.last,
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                ],
+                              )
+                            // 대화 목록이 없을 때 처음 안내 문구 표시
+                            : Text(
+                                _listeningState == ListeningState.ready
+                                    ? '상대방의 말이 이곳에 표시됩니다.'
+                                    : _listeningState ==
+                                            ListeningState.listening
+                                        ? '목소리를 듣고 있는 중입니다...'
+                                        : _listeningState ==
+                                                ListeningState.finished
+                                            ? '완료'
+                                            : '',
+                                style: TextStyle(
+                                  color: _listeningState == ListeningState.ready
+                                      ? Color(0xFFB4B4B4)
+                                      : null,
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                       ),
               ],
             ),
@@ -81,9 +134,11 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
       ),
       floatingActionButton: IconToggleButton(
         toggleColor: Color(0xFF3787FF),
-        icon: _listeningState == ListeningState.ready ? Icons.mic : Icons.stop,
+        icon: _listeningState == ListeningState.ready
+            ? Icons.hearing
+            : Icons.pause_rounded,
         label: _listeningState == ListeningState.ready ? '듣기' : '중지',
-        isToggled: _listeningState != ListeningState.ready,
+        isToggled: _listeningState == ListeningState.ready,
         onPressed: () {
           setState(() {
             if (_listeningState == ListeningState.ready) {
@@ -95,20 +150,17 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                 });
 
                 _timer = Timer(Duration(seconds: 3), () {
+                  recordedText = '음성인식된 내용입니다.';
+
                   setState(() {
                     _listeningState = ListeningState.finished;
                   });
-
-                  recordedText = '안녕하세요. 주문 도와드리겠습니다.';
-                  // 대화 리스트에 녹음된 텍스트 추가
                   conversationList.add(recordedText);
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SelectAnswerScreen(
-                            conversationList: conversationList)),
-                  );
+                  setState(() {
+                    _listeningState = ListeningState.finished;
+                    // 녹음 완료 상태 로직...
+                  });
+                  _navigateToSelectAnswerScreen();
                 });
               });
             } else if (_listeningState != ListeningState.ready) {

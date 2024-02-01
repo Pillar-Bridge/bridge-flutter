@@ -4,7 +4,7 @@ import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_text.dart';
 import 'package:flutter/material.dart';
 
 class SelectAnswerScreen extends StatefulWidget {
-  final List conversationList;
+  final List<String> conversationList;
   const SelectAnswerScreen({super.key, required this.conversationList});
 
   @override
@@ -22,29 +22,30 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
     '화장실이 어디에요?',
   ];
 
-  void _openTextInput() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: MediaQuery.of(context).viewInsets,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: TextField(
-                  controller: _controller,
-                  autofocus: true,
-                  decoration: InputDecoration(
-                    labelText: '직접 입력',
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+  void _addConversation(String text) {
+    setState(() {
+      widget.conversationList.add(text); // 대화 목록에 텍스트 추가
+    });
+    _controller.clear(); // 텍스트 필드 초기화
+  }
+
+  // SelectSentenceButton 클릭 이벤트
+  void _onSentenceSelected(String sentence) {
+    _addConversation(sentence);
+    _navigateBack();
+  }
+
+// TextField에서 엔터를 누를 때 호출
+  void _onSubmitted(String text) {
+    if (text.isNotEmpty) {
+      _addConversation(text);
+      _navigateBack();
+    }
+  }
+
+// `Navigator.pop`을 사용하여 `VoiceRecognitionScreen`으로 돌아가는 함수
+  void _navigateBack() {
+    Navigator.pop(context, widget.conversationList);
   }
 
   @override
@@ -82,26 +83,35 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                   ),
                 ),
                 Padding(
-                    padding: EdgeInsets.only(left: 24, top: 10),
-                    child: Text(
-                      widget.conversationList.last,
-                      style:
-                          TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-                    )),
+                  padding: EdgeInsets.only(left: 24, top: 10),
+                  child: Text(
+                    widget.conversationList.isNotEmpty
+                        ? widget.conversationList.last
+                        : "상대방의 말이 이곳에 표시됩니다.",
+                    style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: widget.conversationList.isEmpty
+                            ? Colors.grey
+                            : Colors.black),
+                  ),
+                ),
               ],
             ),
             Positioned(
               bottom: 50,
-              right: 24,
+              right: 0,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  for (var label in _sentences)
+                  for (var sentence in _sentences)
                     Padding(
                       padding: const EdgeInsets.only(top: 20),
                       child: SelectSentenceButton(
-                        label: label,
-                        onPressed: () {},
+                        label: sentence,
+                        onPressed: () {
+                          _onSentenceSelected(sentence);
+                        },
                       ),
                     ),
                   SizedBox(height: 20),
@@ -130,6 +140,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                         // TextField에서 텍스트가 변경될 때마다 상태 업데이트
                         setState(() {});
                       },
+                      onSubmitted: _onSubmitted,
                       textAlign: TextAlign.center,
                     ),
                   ),
