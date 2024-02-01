@@ -18,6 +18,8 @@ class VoiceRecognitionScreen extends StatefulWidget {
 class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
   ListeningState _listeningState = ListeningState.ready;
   Timer? _timer;
+  String recordedText = '';
+  List<String> conversationList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -97,10 +99,15 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                     _listeningState = ListeningState.finished;
                   });
 
+                  recordedText = '안녕하세요. 주문 도와드리겠습니다.';
+                  // 대화 리스트에 녹음된 텍스트 추가
+                  conversationList.add(recordedText);
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => SelectAnswerScreen()),
+                        builder: (context) => SelectAnswerScreen(
+                            conversationList: conversationList)),
                   );
                 });
               });
