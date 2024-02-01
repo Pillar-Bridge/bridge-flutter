@@ -24,7 +24,7 @@ class MainApp extends StatelessWidget {
         '/': (context) => const SelectPlaceScreen(),
         '/voice': (context) => const VoiceRecognitionScreen(),
         '/voice_setting': (context) => const VoiceSettingScreen(),
-        '/answer': (context) => const SelectAnswerScreen(),
+        '/answer': (context) => const SelectAnswerScreen(conversationList: []),
         '/common_widget_test': (context) => CommonWidgetScreen(),
       },
     );

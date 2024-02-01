@@ -4,14 +4,23 @@ import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_text.dart';
 import 'package:flutter/material.dart';
 
 class SelectAnswerScreen extends StatefulWidget {
-  const SelectAnswerScreen({super.key});
+  final List conversationList;
+  const SelectAnswerScreen({super.key, required this.conversationList});
 
   @override
   State<SelectAnswerScreen> createState() => _SelectAnswerScreenState();
 }
 
 class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
-  final _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
+  final double _minWidth = 148;
+
+  List<String> _sentences = [
+    '차가운 아메리카노 주세요.',
+    '언제까지 영업하시나요?',
+    '먹고갈 수 있나요?',
+    '화장실이 어디에요?',
+  ];
 
   void _openTextInput() {
     showModalBottomSheet(
@@ -20,7 +29,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
         return Padding(
           padding: MediaQuery.of(context).viewInsets,
           child: Column(
-            mainAxisSize: MainAxisSize.min, // 모달의 크기를 내용에 맞게 조절
+            mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 title: TextField(
@@ -31,16 +40,6 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                   ),
                 ),
               ),
-              ElevatedButton(
-                child: Text('완료'),
-                onPressed: () {
-                  setState(() {
-                    // TextField의 내용을 상태로 설정
-                    // IconBasicButton의 라벨을 업데이트
-                  });
-                  Navigator.pop(context); // 모달 닫기
-                },
-              ),
             ],
           ),
         );
@@ -50,6 +49,24 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double maxWidth =
+        MediaQuery.of(context).size.width - 150; // 화면 너비에서 양쪽 패딩을 제외한 값
+
+    // TextPainter를 사용하여 텍스트 너비 계산
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: _controller.text.isEmpty ? '직접입력' : _controller.text,
+        style: TextStyle(fontSize: 20), // TextField와 동일한 스타일 적용
+      ),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: 0, maxWidth: maxWidth);
+
+    // 계산된 텍스트 너비 사용, 단 최소 너비와 최대 너비 사이에서 결정
+    double containerWidth = textPainter.width + 40; // 아이콘 너비와 padding 고려
+    containerWidth = containerWidth < _minWidth ? _minWidth : containerWidth;
+    containerWidth = containerWidth > maxWidth ? maxWidth : containerWidth;
+
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -67,7 +84,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                 Padding(
                     padding: EdgeInsets.only(left: 24, top: 10),
                     child: Text(
-                      '안녕하세요. 주문 도와드리겠습니다.',
+                      widget.conversationList.last,
                       style:
                           TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
                     )),
@@ -79,32 +96,42 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  SelectSentenceButton(
-                    label: '차가운 아메리카노 주세요.',
-                    onPressed: () {},
-                  ),
+                  for (var label in _sentences)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: SelectSentenceButton(
+                        label: label,
+                        onPressed: () {},
+                      ),
+                    ),
                   SizedBox(height: 20),
-                  SelectSentenceButton(
-                    label: '언제까지 영업하시나요?',
-                    onPressed: () {},
-                  ),
-                  SizedBox(height: 20),
-                  SelectSentenceButton(
-                    label: '먹고갈 수 있나요?',
-                    onPressed: () {},
-                  ),
-                  SizedBox(height: 20),
-                  SelectSentenceButton(
-                    label: '화장실이 어디에요?',
-                    onPressed: () {},
-                  ),
-                  SizedBox(height: 20),
-                  IconBasicButton(
-                    label: _controller.text.isEmpty ? '직접입력' : _controller.text,
-                    icon: Icons.keyboard,
-                    onPressed: _openTextInput,
-                    color: Colors.white,
-                    backgroundColor: Colors.black,
+                  Container(
+                    width: containerWidth,
+                    child: TextField(
+                      controller: _controller,
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.black,
+                        contentPadding: EdgeInsets.only(
+                            left: 16, right: 16, top: 12, bottom: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(40),
+                          borderSide: BorderSide.none,
+                        ),
+                        prefixIcon: _controller.text.isEmpty
+                            ? Icon(Icons.keyboard, color: Colors.white)
+                            : null,
+                        hintText: '직접입력',
+                        hintStyle: TextStyle(color: Colors.white),
+                      ),
+                      onChanged: (text) {
+                        // TextField에서 텍스트가 변경될 때마다 상태 업데이트
+                        setState(() {});
+                      },
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ],
               ),
