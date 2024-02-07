@@ -24,9 +24,9 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
 
   void _addConversation(String text) {
     setState(() {
-      widget.conversationList.add(text); // 대화 목록에 텍스트 추가
+      widget.conversationList.add(text);
     });
-    _controller.clear(); // 텍스트 필드 초기화
+    _controller.clear();
   }
 
   // SelectSentenceButton 클릭 이벤트
@@ -50,21 +50,18 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double maxWidth =
-        MediaQuery.of(context).size.width - 150; // 화면 너비에서 양쪽 패딩을 제외한 값
+    double maxWidth = MediaQuery.of(context).size.width - 150;
 
-    // TextPainter를 사용하여 텍스트 너비 계산
     final textPainter = TextPainter(
       text: TextSpan(
         text: _controller.text.isEmpty ? '직접입력' : _controller.text,
-        style: TextStyle(fontSize: 20), // TextField와 동일한 스타일 적용
+        style: TextStyle(fontSize: 20),
       ),
       maxLines: 1,
       textDirection: TextDirection.ltr,
     )..layout(minWidth: 0, maxWidth: maxWidth);
 
-    // 계산된 텍스트 너비 사용, 단 최소 너비와 최대 너비 사이에서 결정
-    double containerWidth = textPainter.width + 40; // 아이콘 너비와 padding 고려
+    double containerWidth = textPainter.width + 40;
     containerWidth = containerWidth < _minWidth ? _minWidth : containerWidth;
     containerWidth = containerWidth > maxWidth ? maxWidth : containerWidth;
 
@@ -120,7 +117,8 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                     child: TextField(
                       controller: _controller,
                       style: TextStyle(color: Colors.white, fontSize: 20),
-                      maxLines: null,
+                      maxLines: 1,
+                      keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.black,
@@ -137,7 +135,6 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                         hintStyle: TextStyle(color: Colors.white),
                       ),
                       onChanged: (text) {
-                        // TextField에서 텍스트가 변경될 때마다 상태 업데이트
                         setState(() {});
                       },
                       onSubmitted: _onSubmitted,
