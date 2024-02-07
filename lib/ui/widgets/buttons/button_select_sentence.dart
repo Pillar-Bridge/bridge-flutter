@@ -21,7 +21,7 @@ class SelectSentenceButton extends StatelessWidget {
           color: Color(0xFFF5F5F5),
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(40), // Set button radius to 100
+          borderRadius: BorderRadius.circular(100), // Set button radius to 100
         ),
       ),
       child: Padding(
