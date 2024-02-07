@@ -4,7 +4,6 @@ import 'package:bridge_flutter/ui/screens/voice_recognition_screen.dart';
 import 'package:bridge_flutter/ui/constants/app_theme.dart';
 import 'package:bridge_flutter/ui/screens/common_widget_test_screen.dart';
 import 'package:bridge_flutter/ui/screens/voice_setting_screen.dart';
-import 'package:bridge_flutter/ui/widgets/buttons/button_basic.dart';
 import 'package:flutter/material.dart';
 
 void main() {

@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:bridge_flutter/ui/widgets/buttons/button_basic.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_text.dart';
 import 'package:flutter/material.dart';
 import 'package:bridge_flutter/ui/screens/voice_recognition_screen.dart';
+import 'package:http/http.dart' as http;
 
 class SelectPlaceScreen extends StatefulWidget {
   const SelectPlaceScreen({super.key});
@@ -11,6 +14,7 @@ class SelectPlaceScreen extends StatefulWidget {
 }
 
 class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
+  // 예시 데이터
   final List<String> labels = [
     '영화관',
     '식당',
@@ -20,13 +24,9 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
     '편의점',
     '약국',
     '주유소',
-    '은행',
-    '편의점',
-    '약국',
-    '주유소',
   ];
 
-  int selectedIndex = -1; // 현재 선택된 버튼의 인덱스를 추적하는 상태
+  String selectedPlace = ''; // 선택된 장소의 이름을 저장하는 변수
 
   void _navigateToVoiceRecognitionScreen() {
     Navigator.push(
@@ -34,6 +34,43 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
       MaterialPageRoute(builder: (context) => VoiceRecognitionScreen()),
     );
   }
+
+  // List<String> labels = []; // 초기 빈 리스트로 시작
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   fetchPlaces(); // 위젯이 초기화될 때 데이터를 로드
+  // }
+
+  // API에서 장소 데이터를 가져오는 메소드
+  // Future<void> fetchPlaces() async {
+  //   try {
+  //     var url = Uri.parse('http://203.253.71.189:5000/places/recommendations');
+  //     var response = await http.post(url,
+  //         body: jsonEncode({
+  //           "latitude": 37.5665, // 예시 위도
+  //           "longitude": 126.9780 // 예시 경도
+  //         }),
+  //         headers: {"Content-Type": "application/json"});
+
+  //     if (response.statusCode == 200) {
+  //       var jsonResponse = jsonDecode(response.body);
+  //       var documents = jsonResponse['data']['documents'];
+
+  //       setState(() {
+  //         labels = documents
+  //             .map<String>((doc) => doc['category_group_name'])
+  //             .toSet()
+  //             .toList(); // 중복 제거 후 리스트로 변환
+  //       });
+  //     } else {
+  //       print('Request failed with status: ${response.statusCode}.');
+  //     }
+  //   } catch (e) {
+  //     print('Caught an exception: $e');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +86,12 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                   style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
               ),
-              const Padding(
-                  padding: EdgeInsets.only(left: 24, top: 10),
+              Padding(
+                  padding: const EdgeInsets.only(left: 24, top: 10),
                   child: Text(
-                    '영화관',
+                    selectedPlace.isNotEmpty
+                        ? selectedPlace
+                        : '영화관', // 선택된 장소가 있으면 표시, 없으면 기본값 표시
                     style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
                   )),
               Padding(
@@ -64,11 +103,11 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                     int index = entry.key;
                     String label = entry.value;
                     return TextToggleButton(
-                      isSelected: selectedIndex == index,
+                      isSelected: selectedPlace == label,
                       label: label,
                       onPressed: () {
                         setState(() {
-                          selectedIndex = index;
+                          selectedPlace = label;
                         });
                       },
                     );
