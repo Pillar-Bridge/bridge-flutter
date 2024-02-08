@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bridge_flutter/controllers/voice_recorder.dart';
 import 'package:bridge_flutter/ui/screens/select_answer_screen.dart';
 import 'package:bridge_flutter/ui/screens/voice_setting_screen.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
@@ -20,6 +21,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
   Timer? _timer;
   String recordedText = '';
   List<String> conversationList = [];
+  final VoiceRecorder _voiceRecorder = VoiceRecorder();
 
   // SelectAnswerScreen으로 이동하는 함수
   void _navigateToSelectAnswerScreen() async {
@@ -144,10 +146,14 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
             if (_listeningState == ListeningState.ready) {
               _listeningState = ListeningState.listening;
 
+              _voiceRecorder.startRecording();
+
               _timer = Timer(Duration(seconds: 3), () {
                 setState(() {
                   _listeningState = ListeningState.waiting;
                 });
+
+                _voiceRecorder.stopRecording();
 
                 _timer = Timer(Duration(seconds: 3), () {
                   recordedText = '음성인식된 내용입니다.';
