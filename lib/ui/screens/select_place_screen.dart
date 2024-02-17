@@ -45,11 +45,21 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
     }
   }
 
-  void _navigateToVoiceRecognitionScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => VoiceRecognitionScreen()),
-    );
+  void _navigateToVoiceRecognitionScreen() async {
+    try {
+      // 선택된 장소로 API 호출하여 대화 아이디 받아오기
+      var dialogueId = await apiClient.createDialogue(selectedPlace);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                VoiceRecognitionScreen(dialogueId: dialogueId)),
+      );
+    } catch (e) {
+      // 에러 처리
+      print("Error creating dialogue: $e");
+    }
   }
 
   @override

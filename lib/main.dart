@@ -1,5 +1,6 @@
 import 'package:bridge_flutter/ui/screens/select_answer_screen.dart';
 import 'package:bridge_flutter/ui/screens/select_place_screen.dart';
+import 'package:bridge_flutter/ui/screens/stt_test_screen.dart';
 import 'package:bridge_flutter/ui/screens/voice_recognition_screen.dart';
 import 'package:bridge_flutter/ui/constants/app_theme.dart';
 import 'package:bridge_flutter/ui/screens/common_widget_test_screen.dart';
@@ -18,10 +19,13 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       theme: AppThemeData.basicThemeData,
       title: 'Bridge',
-      initialRoute: '/',
+      initialRoute: '/stt',
       routes: {
         '/': (context) => const SelectPlaceScreen(),
-        '/voice': (context) => const VoiceRecognitionScreen(),
+        '/stt': (context) => SttTestScreen(),
+        '/voice': (context) => const VoiceRecognitionScreen(
+              dialogueId: -1,
+            ),
         '/voice_setting': (context) => const VoiceSettingScreen(),
         '/answer': (context) => const SelectAnswerScreen(conversationList: []),
         '/common_widget_test': (context) => CommonWidgetScreen(),
