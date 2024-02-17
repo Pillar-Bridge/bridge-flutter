@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 enum ListeningState { ready, listening, waiting, finished }
 
 class VoiceRecognitionScreen extends StatefulWidget {
-  const VoiceRecognitionScreen({super.key});
+  final int dialogueId;
+
+  const VoiceRecognitionScreen({super.key, required this.dialogueId});
 
   @override
   State<VoiceRecognitionScreen> createState() => _VoiceRecognitionScreenState();
