@@ -17,7 +17,7 @@ class TextToggleButton extends StatelessWidget {
     return SizedBox(
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            horizontal: 16, vertical: 10), // Updated padding
+            horizontal: 0, vertical: 0), // Updated padding
         child: OutlinedButton(
           onPressed: onPressed,
           style: OutlinedButton.styleFrom(
@@ -37,7 +37,6 @@ class TextToggleButton extends StatelessWidget {
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
-
           ),
         ),
       ),
