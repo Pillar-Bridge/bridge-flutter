@@ -1,3 +1,4 @@
+import 'package:bridge_flutter/ui/screens/TestScreen.dart';
 import 'package:bridge_flutter/ui/screens/select_answer_screen.dart';
 import 'package:bridge_flutter/ui/screens/select_place_screen.dart';
 import 'package:bridge_flutter/ui/screens/stt_test_screen.dart';
@@ -19,7 +20,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       theme: AppThemeData.basicThemeData,
       title: 'Bridge',
-      initialRoute: '/stt',
+      initialRoute: '/',
       routes: {
         '/': (context) => const SelectPlaceScreen(),
         '/stt': (context) => SttTestScreen(),
@@ -29,6 +30,7 @@ class MainApp extends StatelessWidget {
         '/voice_setting': (context) => const VoiceSettingScreen(),
         '/answer': (context) => const SelectAnswerScreen(conversationList: []),
         '/common_widget_test': (context) => CommonWidgetScreen(),
+        '/test': (context) => MyApp(),
       },
     );
   }

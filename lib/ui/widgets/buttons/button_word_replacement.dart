@@ -14,10 +14,22 @@ class WordReplacementButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: 20, vertical: 10), // Updated padding
+    return Material(
+      elevation: 0.0,
+      borderRadius: BorderRadius.circular(100),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(100),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 5,
+              blurRadius: 15, // 이 값을 늘려 그림자를 더 퍼지게 만듭니다.
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
         child: OutlinedButton(
           onPressed: onPressed,
           style: OutlinedButton.styleFrom(
@@ -26,16 +38,19 @@ class WordReplacementButton extends StatelessWidget {
                 ? BorderSide.none
                 : const BorderSide(width: 1.0, color: Color(0xFFF8F8F8)),
             shape: RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(100), // Set button radius to 100
+              borderRadius: BorderRadius.circular(100),
             ),
           ),
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? Color(0xFF3787FF) : Color(0xFF595959),
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+          child: SizedBox(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: isSelected
+                    ? const Color(0xFF3787FF)
+                    : const Color(0xFF595959),
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ),
