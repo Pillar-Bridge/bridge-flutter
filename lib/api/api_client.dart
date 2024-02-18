@@ -53,11 +53,11 @@ class ApiClient {
     return placeRecommendations;
   }
 
-  Future<int> createDialogue(String place) async {
+  Future<String> createDialogue(String place) async {
     final jsonResponse =
         await _sendRequest('/dialogues', body: {'place': place});
 
-    final dialogueId = jsonResponse['data']['dialogue_id'] as int;
+    final dialogueId = jsonResponse['data']['dialogue_id'] as String;
     return dialogueId;
   }
 }
