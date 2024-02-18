@@ -14,7 +14,9 @@ class SelectAnswerScreen extends StatefulWidget {
 class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
   final TextEditingController _controller = TextEditingController();
   final double _minWidth = 148;
+  List<String> _unselectedSentences = [];
 
+// api로부터 받아올 추천 답변 목록
   List<String> _sentences = [
     '차가운 아메리카노 주세요.',
     '언제까지 영업하시나요?',
@@ -22,9 +24,19 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
     '화장실이 어디에요?',
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    // 초기에 모든 문장을 unselectedSentences에 추가
+    _unselectedSentences = List.from(_sentences);
+  }
+
   void _addConversation(String text) {
     setState(() {
       widget.conversationList.add(text);
+      // 선택된 문장을 unselectedSentences에서 제거
+      _unselectedSentences.remove(text);
+      print('conversationList: ' + widget.conversationList.join(', '));
     });
     _controller.clear();
   }
@@ -45,7 +57,10 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
 
 // `Navigator.pop`을 사용하여 `VoiceRecognitionScreen`으로 돌아가는 함수
   void _navigateBack() {
-    Navigator.pop(context, widget.conversationList);
+    Navigator.pop(context, {
+      'selected': widget.conversationList,
+      'unselected': _unselectedSentences,
+    });
   }
 
   @override
@@ -97,7 +112,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
             ),
             Positioned(
               bottom: 50,
-              right: 0,
+              right: 27,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[

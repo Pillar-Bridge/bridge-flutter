@@ -44,34 +44,38 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
 
   void fetchPlaceRecommendations() async {
     setState(() {
-      _isLoading = true; // API 호출 중임을 표시
+      _isLoading = true; // API 호출 시작 시 로딩 상태로 설정
     });
     try {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-      // API 호출을 통해 장소 추천 목록을 가져옵니다.
-      var result = await apiClient.getPlaceRecommendations(37.5665, 126.9780);
-
+      // 실제 위치 정보를 사용하여 API 호출
+      var result = await apiClient.getPlaceRecommendations(
+          position.latitude, position.longitude);
       List<String> categories;
       if (result.isNotEmpty) {
-        // API 결과가 있는 경우, categoryGroupName만 추출하고 중복 제거
         categories = result
             .map((recommendation) => recommendation.categoryGroupName)
-            .toSet() // Set으로 변환하여 중복 제거
-            .toList(); // 다시 List로 변환
+            .toSet()
+            .toList();
       } else {
-        // API 결과가 없는 경우, 예시 데이터 사용
-        categories = ['영화관(예시)', '카페(예시)', '도서관(예시)']; // 예시 카테고리
+        categories = ['영화관(예시)', '카페(예시)', '도서관(예시)']; // 예시 데이터
       }
-
-
       setState(() {
-        recommendations = categories; // 상태 업데이트
-        _isLoading = false; // API 호출 완료
+        recommendations = categories;
+        _isLoading = false; // 데이터 로딩 완료
       });
     } catch (e) {
-      // 에러 처리
+      // 에러 처리 부분에서 예시 데이터로 대체
       print("Error fetching place recommendations: $e");
+      setState(() {
+        recommendations = [
+          '영화관(예시)',
+          '카페(예시)',
+          '도서관(예시)'
+        ]; // API 호출 실패 시 예시 데이터 사용
+        _isLoading = false; // 로딩 상태 해제
+      });
     }
   }
 
