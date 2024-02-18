@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bridge_flutter/controllers/voice_recorder.dart';
 import 'package:bridge_flutter/ui/screens/select_answer_screen.dart';
 import 'package:bridge_flutter/ui/screens/voice_setting_screen.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_select_sentence.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_word_replacement.dart';
 import 'package:bridge_flutter/ui/widgets/progresses/progress_threedots.dart';
@@ -23,16 +24,51 @@ class VoiceRecognitionScreen extends StatefulWidget {
 class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
   ListeningState _listeningState = ListeningState.ready;
   List<String> conversationList = [];
+  List<String> _unselectedSentences = [];
 
   bool _isAnalyzing = false;
 
   late stt.SpeechToText _speechToText;
   String _text = '';
+  TextEditingController _editingController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _speechToText = stt.SpeechToText();
+  }
+
+  // 직접 입력한 문장을 처리하는 함수
+  void _handleDirectInput() {
+    String inputText = _editingController.text.trim(); // 입력된 텍스트 가져오기
+
+    if (inputText.isNotEmpty) {
+      setState(() {
+        // 기존의 선택했던 맨 마지막 대화 문장을 제거
+        if (conversationList.isNotEmpty) {
+          conversationList.removeLast();
+        }
+        // 입력된 문장을 대화 목록에 추가
+        conversationList.add(inputText);
+        // 입력 필드 초기화
+        _editingController.clear();
+      });
+      print('conversationList: ' + conversationList.join(', '));
+
+      // TODO: API 호출을 통해 새로운 문장(conversationList)에 대한 새로운 대체 단어들 불러오기 로직 수행
+    }
+  }
+
+  // 답변 제안 목록 중 문장을 선택했을 때 호출되는 함수
+  void _selectUnselectedSentence(String selectedSentence) {
+    setState(() {
+      if (conversationList.isNotEmpty) {
+        conversationList.removeLast();
+      }
+      conversationList.add(selectedSentence);
+      _unselectedSentences.remove(selectedSentence);
+    });
+    print('conversationList: ' + conversationList.join(', '));
   }
 
   void _startListening() async {
@@ -91,7 +127,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
 
   // SelectAnswerScreen으로 이동하는 함수
   void _navigateToSelectAnswerScreen() async {
-    final updatedList = await Navigator.push(
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) =>
@@ -99,9 +135,10 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
       ),
     );
 
-    if (updatedList != null) {
+    if (result != null && result is Map) {
       setState(() {
-        conversationList = List<String>.from(updatedList);
+        conversationList = List<String>.from(result['selected'] ?? []);
+        _unselectedSentences = List<String>.from(result['unselected'] ?? []);
       });
     }
 
@@ -142,6 +179,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
         _navigateToSelectAnswerScreen();
       }
     });
+    print('Listening state: $_listeningState');
   }
 
   void _retryListening() {
@@ -210,6 +248,97 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                   if (conversationList.isNotEmpty)
                                     // 선택한 답변
                                     ChangeWord(answer: conversationList.last),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 40),
+                                    child: Text(
+                                        '💡${_unselectedSentences.length}개의 다른 답변 제안',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey[500])),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 20),
+                                    child: Container(
+                                      height: 60, // 버튼의 높이에 맞춰 조절
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: _unselectedSentences.length,
+                                        itemBuilder: (context, index) {
+                                          return Container(
+                                            margin: EdgeInsets.only(
+                                                right: 8), // 버튼 사이의 간격 조절
+                                            child: SelectSentenceButton(
+                                              label:
+                                                  _unselectedSentences[index],
+                                              onPressed: () {
+                                                _selectUnselectedSentence(
+                                                    _unselectedSentences[
+                                                        index]);
+                                              },
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      // 직접 추가한 답변을 입력하는 텍스트 필드
+                                      Expanded(
+                                        child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                              vertical: 20),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 40),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            border: Border.all(
+                                                color: Color(0xFFF5F5F5)),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          child: SingleChildScrollView(
+                                            scrollDirection: Axis.vertical,
+                                            reverse: true,
+                                            child: TextField(
+                                              controller: _editingController,
+                                              maxLines: null,
+                                              decoration: InputDecoration(
+                                                hintText: "직접 추가",
+                                                border: InputBorder.none,
+                                              ),
+                                              showCursor: false,
+                                              style: TextStyle(
+                                                color: Color(0xff595959),
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      // 직접 추가한 답변을 저장하는 버튼
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10, bottom: 20),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                                color: Color(0xFFF5F5F5)),
+                                          ),
+                                          child: IconButton(
+                                            icon: Icon(Icons.check),
+                                            onPressed: _handleDirectInput,
+                                            color: Colors.blue,
+                                            iconSize: 24,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
                                 ],
                               )
                             // 대화 목록이 없을 때 처음 안내 문구 표시
@@ -273,7 +402,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
 class ChangeWord extends StatefulWidget {
   final String answer;
 
-  const ChangeWord({Key? key, required this.answer}) : super(key: key);
+  ChangeWord({Key? key, required this.answer}) : super(key: key);
 
   @override
   _ChangeWordState createState() => _ChangeWordState();
@@ -281,44 +410,87 @@ class ChangeWord extends StatefulWidget {
 
 class _ChangeWordState extends State<ChangeWord> {
   late List<String> words;
+
   Map<String, List<String>> alternatives = {
     "차가운": ["뜨거운", "얼음이 든", "미지근한"],
     "아메리카노": ["라떼", "에스프레소", "카푸치노"],
+    "언제까지": ["늦게까지", "아침에도", "밤에도"],
+    "화장실이": ["가까운 역이", "픽업대가", "나가는 길"]
   };
+  TextEditingController? _editingController = TextEditingController();
+  FocusNode? _focusNode = FocusNode();
+
   OverlayEntry? _overlayEntry;
   String? _currentOverlayWord;
+
+  // props가 변경될 때 호출되는 함수
+  @override
+  void didUpdateWidget(ChangeWord oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.answer != oldWidget.answer) {
+      // 새로운 answer prop이 전달되면 words 상태를 업데이트합니다.
+      setState(() {
+        words = widget.answer.split(' ');
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _editingController?.dispose();
+    _focusNode?.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
     words = widget.answer.split(' ');
+    _editingController = TextEditingController();
+  }
+
+  void _printAlternatives() {
+    print(alternatives);
   }
 
   void _showOverlay(
       BuildContext context, List<String> options, GlobalKey key, String word) {
+    // 현재 클릭된 단어가 이미 활성화된 오버레이와 같은 경우, 오버레이를 닫음
     if (_currentOverlayWord == word) {
       _closeOverlayMenu();
       return;
     }
 
-    _currentOverlayWord = word; // Update the current word
+    _editingController!.clear();
+
+    _currentOverlayWord = word;
 
     final RenderBox renderBox =
         key.currentContext!.findRenderObject() as RenderBox;
     final position = renderBox.localToGlobal(Offset.zero);
 
-    // Create and show the overlay
+    // 이전에 표시된 오버레이가 있으면 제거
+    _overlayEntry?.remove();
+
+    // 새로운 오버레이를 생성하고 표시
     _overlayEntry =
         _createOverlayEntry(context, options, position, renderBox.size, word);
-    Overlay.of(context).insert(_overlayEntry!);
-
     Overlay.of(context)?.insert(_overlayEntry!);
   }
 
   void _closeOverlayMenu() {
     _overlayEntry?.remove();
+    _editingController!.clear();
     _overlayEntry = null;
-    _currentOverlayWord = null; // Clear the current word tracking
+    _currentOverlayWord = null;
+  }
+
+  void _replaceWord(String currentWord, String newWord) {
+    int index = words.indexOf(currentWord);
+    words[index] = newWord; // 선택한 단어로 교체
+    print(alternatives);
+    print(words.join(" "));
+    // TODO : API 호출을 통해 새로운 문장(words)에 대한 새로운 대체 단어들 불러오기 로직 수행
   }
 
   OverlayEntry _createOverlayEntry(BuildContext context, List<String> options,
@@ -327,73 +499,134 @@ class _ChangeWordState extends State<ChangeWord> {
       builder: (context) => Positioned(
         left: position.dx,
         top: position.dy + size.height,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ...options.map((String option) {
-              return Container(
-                margin: EdgeInsets.only(bottom: 20),
-                child: WordReplacementButton(
-                  label: option,
-                  isSelected: false, // 필요에 따라 조건을 설정하여 isSelected 값을 변경
-                  onPressed: () {
-                    setState(() {
-                      _replaceWord(currentWord, option);
-                    });
-                    _overlayEntry?.remove();
-                    _overlayEntry = null;
-                  },
-                ),
-              );
-            }).toList(),
-            Container(
-              margin: EdgeInsets.only(bottom: 20),
-              child: WordReplacementButton(
-                label: "직접 추가",
-                isSelected: false,
-                onPressed: () {
-                  // Handle the action for adding word here
-                },
-              ),
-            ),
-          ],
+        child: Material(
+          color: Colors.transparent,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ...options.map((String option) {
+                return Container(
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: WordReplacementButton(
+                    label: option,
+                    isSelected: false,
+                    onPressed: () {
+                      setState(() {
+                        _replaceWord(currentWord, option);
+                      });
+                      _overlayEntry?.remove();
+                      _overlayEntry = null;
+                    },
+                  ),
+                );
+              }).toList(),
+              Row(
+                children: [
+                  Container(
+                    width: 120,
+                    height: 50,
+                    margin: EdgeInsets.only(bottom: 20),
+                    padding: EdgeInsets.only(left: 20, right: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(100),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 5,
+                          blurRadius: 15,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      controller: _editingController,
+                      focusNode: _focusNode,
+                      decoration: InputDecoration(
+                        hintText: "직접 추가",
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20, left: 10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 5,
+                            blurRadius: 15,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        icon: Icon(Icons.check),
+                        onPressed: () {
+                          setState(() {
+                            // 직접 추가한 단어로 교체
+                            _replaceWord(currentWord, _editingController!.text);
+                          });
+                          // 텍스트 필드 초기화
+                          _editingController!.clear();
+                          _printAlternatives();
+
+                          _overlayEntry?.remove();
+                          _overlayEntry = null;
+                        },
+                        color: Colors.blue,
+                        iconSize: 24,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _replaceWord(String currentWord, String newWord) {
-    int index = words.indexOf(currentWord);
-    if (index != -1) {
-      words[index] = newWord; // 선택한 단어로 교체
-      if (alternatives[currentWord] != null) {
-        alternatives[newWord] = alternatives[currentWord]!;
-        alternatives[newWord]!.remove(newWord);
-        alternatives[newWord]!.add(currentWord);
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    // Wrap your widget build logic as before, adding GestureDetector to call _showOverlay
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap:
-          _closeOverlayMenu, // This will close the overlay if anywhere else on the screen is tapped
+      onTap: _closeOverlayMenu,
       child: Wrap(
         children: words.map((word) {
           final GlobalKey key = GlobalKey();
+
+          // 대체 가능한 단어인지 확인
+          bool isReplaceable = alternatives.keys.contains(word);
+
           return GestureDetector(
             key: key,
             onTap: () {
-              _showOverlay(context, alternatives[word] ?? [], key, word);
+              if (isReplaceable) {
+                _showOverlay(context, alternatives[word] ?? [], key, word);
+              }
             },
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-              child: Text(word,
-                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.w400)),
+              child: Text(
+                word,
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight:
+                      isReplaceable ? FontWeight.w600 : FontWeight.normal,
+                  // 대체 가능한 단어일 경우 파란색과 밑줄을 추가
+                  color: isReplaceable ? Colors.blue : Colors.black,
+                  decoration: isReplaceable
+                      ? TextDecoration.underline
+                      : TextDecoration.none,
+                  decorationColor: Colors.blue,
+                ),
+              ),
             ),
           );
         }).toList(),
