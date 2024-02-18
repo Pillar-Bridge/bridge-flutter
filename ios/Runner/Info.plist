@@ -51,5 +51,9 @@
 	<string>This app needs access to the microphone for voice input</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>This app needs access to speech recognition for processing your voice input</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>create appropriate messages</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>create appropriate messages</string>
 </dict>
 </plist>
