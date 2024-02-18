@@ -7,11 +7,12 @@ import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_word_replacement.dart';
 import 'package:bridge_flutter/ui/widgets/progresses/progress_threedots.dart';
 import 'package:flutter/material.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
-enum ListeningState { ready, listening, waiting, finished }
+enum ListeningState { ready, listening, finished }
 
 class VoiceRecognitionScreen extends StatefulWidget {
-  final int dialogueId;
+  final String dialogueId;
 
   const VoiceRecognitionScreen({super.key, required this.dialogueId});
 
@@ -21,10 +22,72 @@ class VoiceRecognitionScreen extends StatefulWidget {
 
 class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
   ListeningState _listeningState = ListeningState.ready;
-  Timer? _timer;
-  String recordedText = '';
   List<String> conversationList = [];
-  final VoiceRecorder _voiceRecorder = VoiceRecorder();
+
+  bool _isAnalyzing = false;
+
+  late stt.SpeechToText _speechToText;
+  String _text = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _speechToText = stt.SpeechToText();
+  }
+
+  void _startListening() async {
+    if (_listeningState == ListeningState.ready ||
+        _listeningState == ListeningState.finished) {
+      _text = '';
+      bool available = await _speechToText.initialize(
+        onStatus: (status) {
+          if (status == "listening") {
+            print('SpeechToText is listening');
+            setState(() {
+              _listeningState = ListeningState.listening;
+            });
+          } else if (status == "done") {
+            print('SpeechToText is done');
+            setState(() {
+              _listeningState = ListeningState.finished;
+            });
+          }
+        },
+        onError: (error) {
+          print('SpeechToText error: $error');
+          setState(() {
+            _listeningState = ListeningState.finished;
+          });
+        },
+      );
+
+      if (available) {
+        setState(() {
+          _listeningState = ListeningState.listening;
+        });
+
+        // 한국어 음성 인식을 활성화하기 위해 localeId를 'ko_KR'로 설정
+        _speechToText.listen(
+          onResult: (result) {
+            setState(() {
+              _text = result.recognizedWords;
+            });
+          },
+          localeId: 'ko_KR', // 한국어 음성 인식을 위한 로케일 ID 지정
+          pauseFor: Duration(seconds: 2),
+        );
+      }
+    }
+  }
+
+  void _stopListening() {
+    if (_listeningState == ListeningState.listening) {
+      _speechToText.stop();
+      setState(() {
+        _listeningState = ListeningState.ready;
+      });
+    }
+  }
 
   // SelectAnswerScreen으로 이동하는 함수
   void _navigateToSelectAnswerScreen() async {
@@ -45,13 +108,57 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
     _listeningState = ListeningState.ready;
   }
 
+  IconData _getListeningIcon() {
+    if (_listeningState == ListeningState.ready) {
+      return Icons.hearing;
+    } else if (_listeningState == ListeningState.listening) {
+      return Icons.pause_rounded;
+    } else if (_listeningState == ListeningState.finished) {
+      return Icons.check;
+    } else {
+      return Icons.check;
+    }
+  }
+
+  String _getListeningLabel() {
+    if (_listeningState == ListeningState.ready) {
+      return '듣기';
+    } else if (_listeningState == ListeningState.listening) {
+      return '중지';
+    } else if (_listeningState == ListeningState.finished) {
+      return '완료';
+    } else {
+      return '';
+    }
+  }
+
+  void _toggleListeningState() {
+    setState(() {
+      if (_listeningState == ListeningState.ready) {
+        _startListening();
+      } else if (_listeningState == ListeningState.listening) {
+        _stopListening();
+      } else if (_listeningState == ListeningState.finished) {
+        _navigateToSelectAnswerScreen();
+      }
+    });
+  }
+
+  void _retryListening() {
+    if (_listeningState == ListeningState.finished) {
+      setState(() {
+        _startListening();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnimatedContainer(
         duration: const Duration(seconds: 1),
         decoration: BoxDecoration(
-          gradient: _listeningState == ListeningState.waiting
+          gradient: _listeningState == ListeningState.listening
               ? const RadialGradient(
                   center: Alignment.topCenter,
                   radius: 0.5,
@@ -80,7 +187,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                     ),
                   ],
                 ),
-                _listeningState == ListeningState.waiting
+                _isAnalyzing
                     ? ProgressThreeDots()
                     : Expanded(
                         child: _listeningState == ListeningState.ready &&
@@ -111,15 +218,21 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                     ? '상대방의 말이 이곳에 표시됩니다.'
                                     : _listeningState ==
                                             ListeningState.listening
-                                        ? '목소리를 듣고 있는 중입니다...'
+                                        ? _text.isNotEmpty
+                                            ? _text
+                                            : '말씀해주세요...'
                                         : _listeningState ==
                                                 ListeningState.finished
-                                            ? '완료'
-                                            : '',
+                                            ? _text.isNotEmpty
+                                                ? _text
+                                                : '말씀해주세요...'
+                                            : 'Present text speak now',
                                 style: TextStyle(
-                                  color: _listeningState == ListeningState.ready
-                                      ? Color(0xFFB4B4B4)
-                                      : null,
+                                  color: _text.isEmpty
+                                      ? Colors.grey[300]
+                                      : _listeningState == ListeningState.ready
+                                          ? Color(0xFFB4B4B4)
+                                          : null,
                                   fontSize: 40,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -130,47 +243,27 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
           ),
         ),
       ),
-      floatingActionButton: IconToggleButton(
-        toggleColor: Color(0xFF3787FF),
-        icon: _listeningState == ListeningState.ready
-            ? Icons.hearing
-            : Icons.pause_rounded,
-        label: _listeningState == ListeningState.ready ? '듣기' : '중지',
-        isToggled: _listeningState == ListeningState.ready,
-        onPressed: () {
-          setState(() {
-            if (_listeningState == ListeningState.ready) {
-              _listeningState = ListeningState.listening;
-
-              _voiceRecorder.startRecording();
-
-              _timer = Timer(Duration(seconds: 3), () {
-                setState(() {
-                  _listeningState = ListeningState.waiting;
-                });
-
-                _voiceRecorder.stopRecording();
-
-                _timer = Timer(Duration(seconds: 3), () {
-                  recordedText = '음성인식된 내용입니다.';
-
-                  setState(() {
-                    _listeningState = ListeningState.finished;
-                  });
-                  conversationList.add(recordedText);
-                  setState(() {
-                    _listeningState = ListeningState.finished;
-                    // 녹음 완료 상태 로직...
-                  });
-                  _navigateToSelectAnswerScreen();
-                });
-              });
-            } else if (_listeningState != ListeningState.ready) {
-              _timer?.cancel();
-              _listeningState = ListeningState.ready;
-            }
-          });
-        },
+      floatingActionButton: IntrinsicWidth(
+        child: Row(
+          children: [
+            if (_listeningState == ListeningState.finished)
+              FloatingActionButton(
+                onPressed: _retryListening,
+                child: Icon(Icons.refresh),
+                shape: CircleBorder(),
+              )
+            else
+              SizedBox(),
+            const SizedBox(width: 16),
+            IconToggleButton(
+              toggleColor: Color(0xFF3787FF),
+              icon: _getListeningIcon(),
+              label: _getListeningLabel(),
+              isToggled: _listeningState == ListeningState.listening,
+              onPressed: _toggleListeningState,
+            )
+          ],
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
@@ -217,9 +310,9 @@ class _ChangeWordState extends State<ChangeWord> {
     // Create and show the overlay
     _overlayEntry =
         _createOverlayEntry(context, options, position, renderBox.size, word);
-    Overlay.of(context)!.insert(_overlayEntry!);
+    Overlay.of(context).insert(_overlayEntry!);
 
-    Overlay.of(context)!.insert(_overlayEntry!);
+    Overlay.of(context)?.insert(_overlayEntry!);
   }
 
   void _closeOverlayMenu() {
