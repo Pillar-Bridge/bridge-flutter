@@ -5,9 +5,10 @@ import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_text.dart';
 import 'package:flutter/material.dart';
 import 'package:bridge_flutter/ui/screens/voice_recognition_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
 
 class SelectPlaceScreen extends StatefulWidget {
-  const SelectPlaceScreen({super.key});
+  const SelectPlaceScreen({Key? key}) : super(key: key);
 
   @override
   State<SelectPlaceScreen> createState() => _SelectPlaceScreenState();
@@ -22,14 +23,31 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
   @override
   void initState() {
     super.initState();
-    fetchPlaceRecommendations(); // API 호출
+    checkLocationPermission();
+  }
+
+  void checkLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.deniedForever) {
+      // Handle location permission denied forever
+      return;
+    }
+    if (permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always) {
+      fetchPlaceRecommendations();
+    }
   }
 
   void fetchPlaceRecommendations() async {
     try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
       // API 호출을 통해 장소 추천 목록을 가져옵니다.
-      // 예시로 위도와 경도는 임의의 값으로 설정합니다.
-      var result = await apiClient.getPlaceRecommendations(37.5665, 126.9780);
+      var result = await apiClient.getPlaceRecommendations(
+          position.latitude, position.longitude);
       // categoryGroupName만 추출하고, 중복 제거
       final categories = result
           .map((recommendation) => recommendation.categoryGroupName)
