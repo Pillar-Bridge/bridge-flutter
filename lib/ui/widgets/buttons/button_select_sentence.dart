@@ -26,12 +26,19 @@ class SelectSentenceButton extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        child: Text(
-          label,
-          style: const TextStyle(
-            color: Color(0xff595959),
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width - 200, // 버튼 최대 너비 조정
+          ),
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xff595959),
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+            ),
+            softWrap: true,
+            textAlign: TextAlign.center, // 텍스트 정렬 추가
           ),
         ),
       ),
