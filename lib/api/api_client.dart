@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bridge_flutter/api/responses/message_dialogue.dart';
 import 'package:bridge_flutter/api/responses/place_recommendation.dart';
 import 'package:bridge_flutter/utils/token_manager.dart';
 import 'package:http/http.dart' as http;
@@ -75,5 +76,18 @@ class ApiClient {
 
     final dialogueId = jsonResponse['data']['dialogue_id'] as String;
     return dialogueId;
+  }
+
+  Future<MessageDialogue> createMessage(
+      String dialogueId, String message, String speaker, String lang) async {
+    final jsonResponse =
+        await _sendRequest('/dialogues/$dialogueId/messages', body: {
+      'text': message,
+      'lang': lang,
+      'speaker': speaker,
+    });
+
+    final messageDialogue = MessageDialogue.fromJson(jsonResponse['data']);
+    return messageDialogue;
   }
 }
