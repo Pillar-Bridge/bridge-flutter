@@ -1,10 +1,10 @@
 class PlaceRecommendation {
   final String placeName;
-  final String categoryGroupName;
+  final String? categoryGroupName; // Nullable 타입으로 변경
 
   PlaceRecommendation({
     required this.placeName,
-    required this.categoryGroupName,
+    this.categoryGroupName,
   });
 
   factory PlaceRecommendation.fromJson(Map<String, dynamic> json) {

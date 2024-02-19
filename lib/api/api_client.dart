@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:bridge_flutter/api/responses/message_dialogue.dart';
-import 'package:bridge_flutter/api/responses/place_recommendation.dart';
+import 'package:bridge_flutter/api/responses/res_%08replies.dart';
+import 'package:bridge_flutter/api/responses/res_message_dialogue.dart';
+import 'package:bridge_flutter/api/responses/res_place_recommendation.dart';
 import 'package:bridge_flutter/utils/token_manager.dart';
 import 'package:http/http.dart' as http;
 
@@ -62,8 +63,10 @@ class ApiClient {
     final jsonResponse = await _sendRequest('/places/recommendations',
         method: 'GET', body: {'latitude': latitude, 'longitude': longitude});
 
+    print(jsonResponse['data']);
+
     List<PlaceRecommendation> placeRecommendations =
-        (jsonResponse['data']['documents'] as List)
+        (jsonResponse['data'] as List)
             .map((item) => PlaceRecommendation.fromJson(item))
             .toList();
 
@@ -71,8 +74,8 @@ class ApiClient {
   }
 
   Future<String> createDialogue(String place) async {
-    final jsonResponse =
-        await _sendRequest('/dialogues', body: {'place': place});
+    final jsonResponse = await _sendRequest('/dialogues',
+        body: {'place': place}, method: "POST");
 
     final dialogueId = jsonResponse['data']['dialogue_id'] as String;
     return dialogueId;
@@ -80,14 +83,29 @@ class ApiClient {
 
   Future<MessageDialogue> createMessage(
       String dialogueId, String message, String speaker, String lang) async {
-    final jsonResponse =
-        await _sendRequest('/dialogues/$dialogueId/messages', body: {
-      'text': message,
-      'lang': lang,
-      'speaker': speaker,
-    });
+    final jsonResponse = await _sendRequest('/dialogues/$dialogueId/messages',
+        body: {
+          'text': message,
+          'lang': lang,
+          'speaker': speaker,
+        },
+        method: 'POST');
 
     final messageDialogue = MessageDialogue.fromJson(jsonResponse['data']);
     return messageDialogue;
+  }
+
+  Future<RepliesData> getRecommendReplies(String dialogueId) async {
+    final jsonResponse = await _sendRequest('/recommend-replies',
+        method: 'GET', body: {'dialogueId': dialogueId});
+
+    return RepliesData.fromJson(jsonResponse['data']);
+  }
+
+  Future<RepliesData> get(String dialogueId) async {
+    final jsonResponse = await _sendRequest('/recommend-replies',
+        method: 'GET', body: {'dialogueId': dialogueId});
+
+    return RepliesData.fromJson(jsonResponse['data']);
   }
 }

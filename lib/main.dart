@@ -28,7 +28,10 @@ class MainApp extends StatelessWidget {
               dialogueId: "",
             ),
         '/voice_setting': (context) => const VoiceSettingScreen(),
-        '/answer': (context) => const SelectAnswerScreen(conversationList: []),
+        '/answer': (context) => const SelectAnswerScreen(
+              conversationList: [],
+              recommendedSentences: [],
+            ),
         '/common_widget_test': (context) => CommonWidgetScreen(),
         '/test': (context) => MyApp(),
       },

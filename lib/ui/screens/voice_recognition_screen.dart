@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bridge_flutter/api/api_client.dart';
 import 'package:bridge_flutter/controllers/voice_recorder.dart';
 import 'package:bridge_flutter/ui/screens/select_answer_screen.dart';
 import 'package:bridge_flutter/ui/screens/voice_setting_screen.dart';
@@ -22,9 +23,12 @@ class VoiceRecognitionScreen extends StatefulWidget {
 }
 
 class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
+  String get dialogueId => widget.dialogueId;
+  ApiClient apiClient = ApiClient(); // ApiClient 인스턴스 생성
   ListeningState _listeningState = ListeningState.ready;
   List<String> conversationList = [];
   List<String> _unselectedSentences = [];
+  String? _tempMessageSentYet = null;
 
   bool _isAnalyzing = false;
 
@@ -50,6 +54,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
         }
         // 입력된 문장을 대화 목록에 추가
         conversationList.add(inputText);
+        _tempMessageSentYet = inputText;
         // 입력 필드 초기화
         _editingController.clear();
       });
@@ -66,6 +71,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
         conversationList.removeLast();
       }
       conversationList.add(selectedSentence);
+      _tempMessageSentYet = selectedSentence;
       _unselectedSentences.remove(selectedSentence);
     });
     print('conversationList: ' + conversationList.join(', '));
@@ -109,7 +115,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
               _text = result.recognizedWords;
             });
           },
-          localeId: 'ko_KR', // 한국어 음성 인식을 위한 로케일 ID 지정
+          localeId: 'en_US', // 한국어 음성 인식을 위한 로케일 ID 지정
           pauseFor: Duration(seconds: 2),
         );
       }
@@ -126,18 +132,20 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
   }
 
   // SelectAnswerScreen으로 이동하는 함수
-  void _navigateToSelectAnswerScreen() async {
+  void _navigateToSelectAnswerScreen(List<String> recommendedSentences) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            SelectAnswerScreen(conversationList: conversationList),
+        builder: (context) => SelectAnswerScreen(
+            conversationList: conversationList,
+            recommendedSentences: recommendedSentences),
       ),
     );
 
     if (result != null && result is Map) {
       setState(() {
         conversationList = List<String>.from(result['selected'] ?? []);
+        _tempMessageSentYet = conversationList.last;
         _unselectedSentences = List<String>.from(result['unselected'] ?? []);
       });
     }
@@ -169,17 +177,40 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
     }
   }
 
-  void _toggleListeningState() {
+  void _toggleListeningState() async {
+    if (_tempMessageSentYet != null) {
+      await apiClient.createMessage(
+          dialogueId, _tempMessageSentYet!, 'user', 'en');
+    }
     setState(() {
       if (_listeningState == ListeningState.ready) {
         _startListening();
       } else if (_listeningState == ListeningState.listening) {
         _stopListening();
       } else if (_listeningState == ListeningState.finished) {
-        _navigateToSelectAnswerScreen();
+        submitPartnerMessage();
       }
     });
     print('Listening state: $_listeningState');
+  }
+
+  void submitPartnerMessage() async {
+    if (_text.isNotEmpty) {
+      setState(() {
+        conversationList.add(_text);
+        _isAnalyzing = true;
+      });
+
+      await apiClient.createMessage(dialogueId, _text, 'partner', 'en');
+
+      final conversations = await apiClient.getRecommendReplies(dialogueId);
+
+      _navigateToSelectAnswerScreen(conversations.response);
+
+      setState(() {
+        _isAnalyzing = false;
+      });
+    }
   }
 
   void _retryListening() {
