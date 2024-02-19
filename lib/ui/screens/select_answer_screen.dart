@@ -5,23 +5,22 @@ import 'package:flutter/material.dart';
 
 class SelectAnswerScreen extends StatefulWidget {
   final List<String> conversationList;
-  const SelectAnswerScreen({super.key, required this.conversationList});
+  final List<String> recommendedSentences;
+  const SelectAnswerScreen(
+      {super.key,
+      required this.conversationList,
+      required this.recommendedSentences});
 
   @override
   State<SelectAnswerScreen> createState() => _SelectAnswerScreenState();
 }
 
 class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
+  List<String> get _sentences => widget.recommendedSentences;
+
   final TextEditingController _controller = TextEditingController();
   final double _minWidth = 148;
   List<String> _unselectedSentences = [];
-
-  final List<String> _sentences = [
-    '차가운 아메리카노 주세요.',
-    '언제까지 영업하시나요?',
-    '먹고갈 수 있나요?',
-    '화장실이 어디에요?',
-  ];
 
   @override
   void initState() {

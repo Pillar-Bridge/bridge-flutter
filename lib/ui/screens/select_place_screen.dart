@@ -1,5 +1,5 @@
 import 'package:bridge_flutter/api/api_client.dart';
-import 'package:bridge_flutter/api/responses/place_recommendation.dart';
+import 'package:bridge_flutter/api/responses/res_place_recommendation.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_basic.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_text.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +55,18 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
       List<String> categories;
       if (result.isNotEmpty) {
         categories = result
-            .map((recommendation) => recommendation.categoryGroupName)
+            .map((recommendation) =>
+                recommendation.categoryGroupName?.replaceAll("_", " "))
+            .where((category) => category != null) // Filter out null values
+            .map((category) => category!
+                .split(' ')
+                .map((word) => word[0].toUpperCase() + word.substring(1))
+                .join(' ')) // Capitalize first letter of each word
+            .map((category) => category
+                .split(' ')
+                .map((word) => word[0].toUpperCase() + word.substring(1))
+                .join(' ')) // Capitalize first letter of each word
+            .map((recommendation) => recommendation.replaceAll(" ", ""))
             .toSet()
             .toList();
       } else {
