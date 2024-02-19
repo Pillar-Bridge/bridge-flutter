@@ -5,6 +5,7 @@ import 'package:bridge_flutter/controllers/voice_recorder.dart';
 import 'package:bridge_flutter/ui/screens/select_answer_screen.dart';
 import 'package:bridge_flutter/ui/screens/voice_setting_screen.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_select_sentence.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_suggestion_sentence.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_word_replacement.dart';
 import 'package:bridge_flutter/ui/widgets/progresses/progress_threedots.dart';
@@ -59,8 +60,6 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
         _editingController.clear();
       });
       print('conversationList: ${conversationList.join(', ')}');
-
-      // TODO: API 호출을 통해 새로운 문장(conversationList)에 대한 새로운 대체 단어들 불러오기 로직 수행
     }
   }
 
@@ -340,7 +339,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                           return Container(
                                             margin: const EdgeInsets.only(
                                                 right: 8), // 버튼 사이의 간격 조절
-                                            child: SelectSentenceButton(
+                                            child: SuggestionSentenceButton(
                                               label:
                                                   _unselectedSentences[index],
                                               onPressed: () {
@@ -455,6 +454,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                 child: FloatingActionButton(
                   onPressed: () {
                     // 새로고침 버튼이 클릭되었을 때 실행될 코드를 여기에 작성합니다.
+                    _retryListening();
                   },
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50.0),
@@ -495,8 +495,8 @@ class _ChangeWordState extends State<ChangeWord> {
   late List<String> words;
 
   Map<String, List<String>> alternatives = {
-    "차가운": ["뜨거운", "얼음이 든", "미지근한"],
-    "아메리카노": ["라떼", "에스프레소", "카푸치노"],
+    "[dish": ["soup", "fries", "salad"],
+    "more minutes": ["5 minutes", "10 minutes", "15 minutes"],
     "언제까지": ["늦게까지", "아침에도", "밤에도"],
     "화장실이": ["가까운 역이", "픽업대가", "나가는 길"]
   };

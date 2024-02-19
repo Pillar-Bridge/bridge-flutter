@@ -136,9 +136,9 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                         filled: true,
                         fillColor: Colors.black,
                         contentPadding: const EdgeInsets.only(
-                            left: 16, right: 16, top: 12, bottom: 12),
+                            left: 20, right: 20, top: 12, bottom: 12),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(40),
+                          borderRadius: BorderRadius.circular(100),
                           borderSide: BorderSide.none,
                         ),
                         prefixIcon: _controller.text.isEmpty
@@ -151,7 +151,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                         setState(() {});
                       },
                       onSubmitted: _onSubmitted,
-                      textAlign: TextAlign.center,
+                      textAlign: TextAlign.end,
                     ),
                   ),
                 ],
