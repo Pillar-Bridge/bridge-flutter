@@ -275,7 +275,9 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                       ? () {
                           _navigateToVoiceRecognitionScreen();
                         }
-                      : () {}, // 선택된 장소가 없으면 버튼 비활성화
+                      : () {
+                          print('선택된 장소가 없습니다.');
+                        }, // 선택된 장소가 없으면 버튼 비활성화
                 ),
               ],
             )));
