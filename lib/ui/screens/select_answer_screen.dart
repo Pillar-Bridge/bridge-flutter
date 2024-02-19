@@ -92,8 +92,9 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                     style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                 ),
+                // 음성인식한 내용이 표시되는 부분
                 Padding(
-                  padding: const EdgeInsets.only(left: 24, top: 10),
+                  padding: const EdgeInsets.only(left: 24, right: 24, top: 10),
                   child: Text(
                     widget.conversationList.isNotEmpty
                         ? widget.conversationList.last
@@ -142,7 +143,11 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                           borderSide: BorderSide.none,
                         ),
                         prefixIcon: _controller.text.isEmpty
-                            ? const Icon(Icons.keyboard, color: Colors.white)
+                            ? const Padding(
+                                padding: EdgeInsets.only(left: 10),
+                                child: Icon(Icons.keyboard,
+                                    color: Colors.white, size: 30),
+                              )
                             : null,
                         hintText: '직접입력',
                         hintStyle: const TextStyle(color: Colors.white),
@@ -165,7 +170,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                 height: 60,
                 child: FloatingActionButton(
                   onPressed: () {
-                    // 새로고침 버튼이 클릭되었을 때 실행될 코드를 여기에 작성합니다.
+                    // TODO: 추천 답변을 다시 가져오기
                   },
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50.0),
