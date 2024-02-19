@@ -1,4 +1,5 @@
 import 'package:bridge_flutter/ui/widgets/buttons/button_basic_icon.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_current_situation.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_select_sentence.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_text.dart';
@@ -126,6 +127,7 @@ class CommonWidgetScreen extends StatelessWidget {
                 },
               ),
             ),
+            CurrentSituationButton(situation: "카페, 주문 중"),
           ],
         ),
       ),

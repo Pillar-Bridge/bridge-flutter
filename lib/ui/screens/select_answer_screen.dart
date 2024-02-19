@@ -15,7 +15,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
   final TextEditingController _controller = TextEditingController();
   final double _minWidth = 148;
 
-  List<String> _sentences = [
+  final List<String> _sentences = [
     '차가운 아메리카노 주세요.',
     '언제까지 영업하시나요?',
     '먹고갈 수 있나요?',
