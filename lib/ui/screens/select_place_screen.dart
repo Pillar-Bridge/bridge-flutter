@@ -20,24 +20,11 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
 
   String selectedPlace = ''; // 선택된 장소의 이름을 저장하는 변수
   bool _isLoading = true; // API 호출 중인지 여부를 저장하는 변수
-  TextEditingController placeController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     checkLocationPermission();
-  }
-
-  void addNewPlace() {
-    final String placeName = placeController.text.trim();
-    if (placeName.isNotEmpty && !recommendations.contains(placeName)) {
-      setState(() {
-        recommendations.add(placeName);
-        selectedPlace =
-            placeName; // Optionally auto-select the newly added place
-      });
-      placeController.clear();
-    }
   }
 
   void checkLocationPermission() async {
@@ -95,6 +82,7 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
   void _navigateToVoiceRecognitionScreen() async {
     try {
       // 선택된 장소로 API 호출하여 대화 아이디 받아오기
+      print("Selected place: $selectedPlace");
       var dialogueId = await apiClient.createDialogue(selectedPlace);
 
       Navigator.push(
@@ -109,15 +97,55 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
     }
   }
 
+  void _showPlaceInputDialog() {
+    final TextEditingController textEditingController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('직접 장소 입력하기'),
+          content: TextField(
+            controller: textEditingController,
+            decoration: const InputDecoration(hintText: "장소를 입력해주세요"),
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black, // 글자 색상을 검정색으로 설정
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('취소'),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black, // 글자 색상을 검정색으로 설정
+              ),
+              onPressed: () {
+                setState(() {
+                  selectedPlace = textEditingController.text.trim();
+                });
+                Navigator.of(context).pop();
+                _navigateToVoiceRecognitionScreen();
+              },
+              child: const Text('완료'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
           child: _isLoading
-              ? Center(
+              ? const Center(
                   child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     CircularProgressIndicator(),
                     Padding(
                       padding: EdgeInsets.only(top: 20),
@@ -128,90 +156,117 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 24, top: 18),
-                      child: Text(
-                        '지금 당신의 위치는',
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 200),
+                      child: Center(
+                        child: Container(
+                          width: 100, // Container의 너비를 100으로 설정
+                          height: 25, // Container의 높이 설정
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200], // 배경색을 grey[200]으로 설정
+                            borderRadius:
+                                BorderRadius.circular(100), // 모서리 반경을 100으로 설정
+                          ),
+                          child: Center(
+                            // Text를 Container 중앙에 배치
+                            child: Text(
+                              '🤔지금 당신은',
+                              style: TextStyle(
+                                  fontSize: 14, color: Colors.grey[700]),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                     Padding(
-                        padding: const EdgeInsets.only(left: 24, top: 10),
-                        child: Text(
-                          selectedPlace.isNotEmpty
-                              ? selectedPlace
-                              : '어디인가요?', // 선택된 장소가 있으면 표시, 없으면 기본값 표시
-                          style: TextStyle(
-                              fontSize: 40, fontWeight: FontWeight.bold),
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Center(
+                          child: Text(
+                            selectedPlace.isNotEmpty
+                                ? selectedPlace
+                                : '어디에 있나요?', // 선택된 장소가 있으면 표시, 없으면 기본값 표시
+                            style: const TextStyle(
+                                fontSize: 40, fontWeight: FontWeight.bold),
+                          ),
                         )),
                     Padding(
                       padding:
-                          const EdgeInsets.only(left: 24, right: 24, top: 90),
-                      child: Wrap(
-                        spacing: 4.0,
-                        runSpacing: 4.0,
-                        children: recommendations.map((recommendation) {
-                          return TextToggleButton(
-                            isSelected: selectedPlace == recommendation,
-                            label: recommendation,
-                            onPressed: () {
-                              setState(() {
-                                selectedPlace = recommendation;
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    // 직접 설정 버튼
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24.0, vertical: 8.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: placeController,
-                              style: TextStyle(fontSize: 16.0),
-                              showCursor: false,
-                              decoration: InputDecoration(
-                                hintText: "직접 설정",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(100),
-                                  borderSide:
-                                      BorderSide(width: 1, color: Colors.black),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(100),
-                                  borderSide:
-                                      BorderSide(width: 1, color: Colors.black),
-                                ),
-                                contentPadding:
-                                    EdgeInsets.symmetric(horizontal: 20),
+                          const EdgeInsets.only(left: 24, right: 24, top: 200),
+                      child: SizedBox(
+                        height: 50, // 리스트 항목의 높이를 고정
+                        child: ListView.builder(
+                          itemCount: recommendations.length, // 리스트에 표시할 항목 수
+                          scrollDirection: Axis.horizontal, // 가로 스크롤 설정
+                          itemBuilder: (context, index) {
+                            final recommendation =
+                                recommendations[index]; // 현재 항목
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 8), // 항목 간 간격
+                              child: TextToggleButton(
+                                isSelected: selectedPlace == recommendation,
+                                label: recommendation,
+                                onPressed: () {
+                                  setState(() {
+                                    selectedPlace = recommendation;
+                                  });
+                                },
                               ),
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.add),
-                            onPressed: addNewPlace,
-                          ),
-                        ],
+                            );
+                          },
+                        ),
                       ),
                     ),
+                    const Padding(
+                        padding: EdgeInsets.only(left: 30, right: 30, top: 20),
+                        child: Text('⚑  위치기반 가장 가까운 장소 제안',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ))),
                   ],
                 ),
         ),
         bottomNavigationBar: Container(
-            margin: EdgeInsets.only(left: 24, right: 24, bottom: 50),
-            child: BasicButton(
-              label: selectedPlace.isNotEmpty
-                  ? '선택한 장소로 시작하기'
-                  : '장소를 선택해주세요', // 버튼 라벨 조건부 설정
-              onPressed: selectedPlace.isNotEmpty
-                  ? () {
-                      _navigateToVoiceRecognitionScreen();
-                    }
-                  : () {}, // 선택된 장소가 없으면 버튼 비활성화
+            margin: const EdgeInsets.only(left: 24, right: 24, bottom: 50),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  height: 70,
+                  child: OutlinedButton(
+                    onPressed: _showPlaceInputDialog,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                    ),
+                    child: const Text(
+                      '➕ 직접 장소 입력하기',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight:
+                            FontWeight.w500, // Set the font weight to medium
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 10), // 위젯 간 간격 설정 (20px
+                BasicButton(
+                  label: selectedPlace.isNotEmpty
+                      ? '선택한 장소로 시작하기'
+                      : '장소를 선택해주세요', // 버튼 라벨 조건부 설정
+                  onPressed: selectedPlace.isNotEmpty
+                      ? () {
+                          _navigateToVoiceRecognitionScreen();
+                        }
+                      : () {}, // 선택된 장소가 없으면 버튼 비활성화
+                ),
+              ],
             )));
   }
 }
