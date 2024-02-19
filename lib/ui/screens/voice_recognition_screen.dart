@@ -28,9 +28,9 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
   ListeningState _listeningState = ListeningState.ready;
   List<String> conversationList = [];
   List<String> _unselectedSentences = [];
-  String? _tempMessageSentYet = null;
+  String? _tempMessageSentYet;
 
-  final bool _isAnalyzing = false;
+  bool _isAnalyzing = false;
 
   late stt.SpeechToText _speechToText;
   String _text = '';
@@ -116,7 +116,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
             });
           },
           localeId: 'en_US', // 한국어 음성 인식을 위한 로케일 ID 지정
-          pauseFor: Duration(seconds: 2),
+          pauseFor: const Duration(seconds: 2),
         );
       }
     }
@@ -289,27 +289,23 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 20),
-                                    child: SizedBox(
-                                      height: 60, // 버튼의 높이에 맞춰 조절
-                                      child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: _unselectedSentences.length,
-                                        itemBuilder: (context, index) {
-                                          return Container(
-                                            margin: const EdgeInsets.only(
-                                                right: 8), // 버튼 사이의 간격 조절
-                                            child: SelectSentenceButton(
-                                              label:
-                                                  _unselectedSentences[index],
-                                              onPressed: () {
-                                                _selectUnselectedSentence(
-                                                    _unselectedSentences[
-                                                        index]);
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children:
+                                          _unselectedSentences.map((sentence) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 8), // 버튼 사이의 세로 간격 조절
+                                          child: SelectSentenceButton(
+                                            label: sentence,
+                                            onPressed: () {
+                                              _selectUnselectedSentence(
+                                                  sentence);
+                                            },
+                                          ),
+                                        );
+                                      }).toList(),
                                     ),
                                   ),
                                   Row(
