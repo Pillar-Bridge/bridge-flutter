@@ -21,7 +21,6 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
   String selectedPlace = ''; // 선택된 장소의 이름을 저장하는 변수
   bool _isLoading = true; // API 호출 중인지 여부를 저장하는 변수
   TextEditingController placeController = TextEditingController();
-  final double _minWidth = 148;
 
   @override
   void initState() {
@@ -184,10 +183,8 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(100),
-                                  borderSide: BorderSide(
-                                      width: 1,
-                                      color: Colors
-                                          .black), // 포커스가 있을 때의 테두리 색상을 검정색으로 설정
+                                  borderSide:
+                                      BorderSide(width: 1, color: Colors.black),
                                 ),
                                 contentPadding:
                                     EdgeInsets.symmetric(horizontal: 20),
