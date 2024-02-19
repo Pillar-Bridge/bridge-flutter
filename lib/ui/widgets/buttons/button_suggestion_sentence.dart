@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class SelectSentenceButton extends StatelessWidget {
+class SuggestionSentenceButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
 
-  const SelectSentenceButton({
+  const SuggestionSentenceButton({
     Key? key,
     required this.label,
     required this.onPressed,
@@ -21,15 +21,12 @@ class SelectSentenceButton extends StatelessWidget {
           color: Color(0xFFF5F5F5),
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(100),
+          borderRadius: BorderRadius.circular(100), // Set button radius to 100
         ),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width - 140, // 버튼 최대 너비 조정
-          ),
+        child: Container(
           child: Text(
             label,
             style: const TextStyle(

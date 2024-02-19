@@ -12,7 +12,7 @@ class ChangeWord extends StatefulWidget {
 class _ChangeWordState extends State<ChangeWord> {
   late List<String> words;
   Map<String, List<String>> alternatives = {
-    "차가운": ["뜨거운", "얼음이 든", "미지근한"],
+    "[dish": ["steak", "soup", "fries"],
     "아메리카노": ["라떼", "에스프레소", "카푸치노"],
   };
 
@@ -31,7 +31,7 @@ class _ChangeWordState extends State<ChangeWord> {
       position: RelativeRect.fromRect(
           Rect.fromPoints(
             overlay.globalToLocal(position),
-            overlay.globalToLocal(position) + Offset(1, 1), // 작은 오프셋 추가
+            overlay.globalToLocal(position) + const Offset(1, 1), // 작은 오프셋 추가
           ),
           Offset.zero & overlay.size),
       items: options.map((String value) {
@@ -40,7 +40,7 @@ class _ChangeWordState extends State<ChangeWord> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Center(
-              child: Text(value, style: TextStyle(fontSize: 20)),
+              child: Text(value, style: const TextStyle(fontSize: 20)),
             ),
           ),
         );
@@ -68,9 +68,10 @@ class _ChangeWordState extends State<ChangeWord> {
                 context, alternatives[word] ?? [], details.globalPosition);
           },
           child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             child: Text(word,
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.w400)),
+                style:
+                    const TextStyle(fontSize: 40, fontWeight: FontWeight.w400)),
           ),
         );
       }).toList(),
