@@ -230,7 +230,7 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                     ),
                     const Padding(
                         padding: EdgeInsets.only(left: 30, right: 30, top: 20),
-                        child: Text('⚑  위치기반 가장 가까운 장소 제안',
+                        child: Text('⚑ 위치기반 가장 가까운 장소 제안',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey,
