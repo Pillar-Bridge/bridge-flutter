@@ -279,33 +279,79 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                   if (conversationList.isNotEmpty)
                                     // 선택한 답변
                                     ChangeWord(answer: conversationList.last),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: FloatingActionButton(
+                                          onPressed: () {
+                                            // TODO: 유저의 답변을 읽어주는 api 호출 및 음성 출력 기능 구현
+                                          },
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(50.0),
+                                          ),
+                                          backgroundColor: Colors.white,
+                                          elevation: 0,
+                                          child: const Icon(Icons.headset,
+                                              color: Colors.grey),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: FloatingActionButton(
+                                          onPressed: () {
+                                            // TODO: dialog를 통해서 화면 전체로 크게 텍스트를 표시하는 기능 구현
+                                          },
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(50.0),
+                                          ),
+                                          backgroundColor: Colors.white,
+                                          elevation: 0,
+                                          child: const Icon(Icons.tablet,
+                                              color: Colors.grey),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 40),
                                     child: Text(
-                                        '💡${_unselectedSentences.length}개의 다른 답변 제안',
+                                        '⚑  ${_unselectedSentences.length}개의 다른 답변 제안',
                                         style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.grey[500])),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 20),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children:
-                                          _unselectedSentences.map((sentence) {
-                                        return Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 8), // 버튼 사이의 세로 간격 조절
-                                          child: SelectSentenceButton(
-                                            label: sentence,
-                                            onPressed: () {
-                                              _selectUnselectedSentence(
-                                                  sentence);
-                                            },
-                                          ),
-                                        );
-                                      }).toList(),
+                                    child: SizedBox(
+                                      height: 60, // 버튼의 높이에 맞춰 조절
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: _unselectedSentences.length,
+                                        itemBuilder: (context, index) {
+                                          return Container(
+                                            margin: const EdgeInsets.only(
+                                                right: 8), // 버튼 사이의 간격 조절
+                                            child: SelectSentenceButton(
+                                              label:
+                                                  _unselectedSentences[index],
+                                              onPressed: () {
+                                                _selectUnselectedSentence(
+                                                    _unselectedSentences[
+                                                        index]);
+                                              },
+                                            ),
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ),
                                   Row(
