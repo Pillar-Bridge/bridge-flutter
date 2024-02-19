@@ -34,7 +34,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
       widget.conversationList.add(text);
       // 선택된 문장을 unselectedSentences에서 제거
       _unselectedSentences.remove(text);
-      print('conversationList: ' + widget.conversationList.join(', '));
+      print('conversationList: ${widget.conversationList.join(', ')}');
     });
     _controller.clear();
   }
@@ -68,7 +68,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
     final textPainter = TextPainter(
       text: TextSpan(
         text: _controller.text.isEmpty ? '직접입력' : _controller.text,
-        style: TextStyle(fontSize: 20),
+        style: const TextStyle(fontSize: 20),
       ),
       maxLines: 1,
       textDirection: TextDirection.ltr,
@@ -85,7 +85,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(left: 24, top: 18),
                   child: Text(
                     '상대방의 말',
@@ -93,7 +93,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 24, top: 10),
+                  padding: const EdgeInsets.only(left: 24, top: 10),
                   child: Text(
                     widget.conversationList.isNotEmpty
                         ? widget.conversationList.last
@@ -124,28 +124,28 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                         },
                       ),
                     ),
-                  SizedBox(height: 20),
-                  Container(
+                  const SizedBox(height: 20),
+                  SizedBox(
                     width: containerWidth,
                     child: TextField(
                       controller: _controller,
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
                       maxLines: 1,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.black,
-                        contentPadding: EdgeInsets.only(
+                        contentPadding: const EdgeInsets.only(
                             left: 16, right: 16, top: 12, bottom: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(40),
                           borderSide: BorderSide.none,
                         ),
                         prefixIcon: _controller.text.isEmpty
-                            ? Icon(Icons.keyboard, color: Colors.white)
+                            ? const Icon(Icons.keyboard, color: Colors.white)
                             : null,
                         hintText: '직접입력',
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
                       ),
                       onChanged: (text) {
                         setState(() {});
@@ -160,19 +160,19 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
             Positioned(
               bottom: 50,
               left: 24,
-              child: Container(
+              child: SizedBox(
                 width: 60,
                 height: 60,
                 child: FloatingActionButton(
                   onPressed: () {
                     // 새로고침 버튼이 클릭되었을 때 실행될 코드를 여기에 작성합니다.
                   },
-                  child: Icon(Icons.refresh, color: Colors.white),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50.0),
                   ),
                   backgroundColor: Colors.blue,
                   elevation: 0,
+                  child: const Icon(Icons.refresh, color: Colors.white),
                 ),
               ),
             ),
