@@ -26,11 +26,11 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
   List<String> conversationList = [];
   List<String> _unselectedSentences = [];
 
-  bool _isAnalyzing = false;
+  final bool _isAnalyzing = false;
 
   late stt.SpeechToText _speechToText;
   String _text = '';
-  TextEditingController _editingController = TextEditingController();
+  final TextEditingController _editingController = TextEditingController();
 
   @override
   void initState() {
@@ -53,7 +53,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
         // 입력 필드 초기화
         _editingController.clear();
       });
-      print('conversationList: ' + conversationList.join(', '));
+      print('conversationList: ${conversationList.join(', ')}');
 
       // TODO: API 호출을 통해 새로운 문장(conversationList)에 대한 새로운 대체 단어들 불러오기 로직 수행
     }
@@ -68,7 +68,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
       conversationList.add(selectedSentence);
       _unselectedSentences.remove(selectedSentence);
     });
-    print('conversationList: ' + conversationList.join(', '));
+    print('conversationList: ${conversationList.join(', ')}');
   }
 
   void _startListening() async {
@@ -110,7 +110,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
             });
           },
           localeId: 'ko_KR', // 한국어 음성 인식을 위한 로케일 ID 지정
-          pauseFor: Duration(seconds: 2),
+          pauseFor: const Duration(seconds: 2),
         );
       }
     }
@@ -219,7 +219,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => VoiceSettingScreen()),
+                              builder: (context) => const VoiceSettingScreen()),
                         );
                       },
                     ),
@@ -258,14 +258,14 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 20),
-                                    child: Container(
+                                    child: SizedBox(
                                       height: 60, // 버튼의 높이에 맞춰 조절
                                       child: ListView.builder(
                                         scrollDirection: Axis.horizontal,
                                         itemCount: _unselectedSentences.length,
                                         itemBuilder: (context, index) {
                                           return Container(
-                                            margin: EdgeInsets.only(
+                                            margin: const EdgeInsets.only(
                                                 right: 8), // 버튼 사이의 간격 조절
                                             child: SelectSentenceButton(
                                               label:
@@ -287,14 +287,14 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                       // 직접 추가한 답변을 입력하는 텍스트 필드
                                       Expanded(
                                         child: Container(
-                                          margin: EdgeInsets.symmetric(
+                                          margin: const EdgeInsets.symmetric(
                                               vertical: 20),
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 40),
                                           decoration: BoxDecoration(
                                             color: Colors.white,
                                             border: Border.all(
-                                                color: Color(0xFFF5F5F5)),
+                                                color: const Color(0xFFF5F5F5)),
                                             borderRadius:
                                                 BorderRadius.circular(100),
                                           ),
@@ -304,12 +304,12 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                             child: TextField(
                                               controller: _editingController,
                                               maxLines: null,
-                                              decoration: InputDecoration(
+                                              decoration: const InputDecoration(
                                                 hintText: "직접 추가",
                                                 border: InputBorder.none,
                                               ),
                                               showCursor: false,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 color: Color(0xff595959),
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w500,
@@ -327,10 +327,10 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                             color: Colors.white,
                                             shape: BoxShape.circle,
                                             border: Border.all(
-                                                color: Color(0xFFF5F5F5)),
+                                                color: const Color(0xFFF5F5F5)),
                                           ),
                                           child: IconButton(
-                                            icon: Icon(Icons.check),
+                                            icon: const Icon(Icons.check),
                                             onPressed: _handleDirectInput,
                                             color: Colors.blue,
                                             iconSize: 24,
@@ -360,7 +360,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                   color: _text.isEmpty
                                       ? Colors.grey[300]
                                       : _listeningState == ListeningState.ready
-                                          ? Color(0xFFB4B4B4)
+                                          ? const Color(0xFFB4B4B4)
                                           : null,
                                   fontSize: 40,
                                   fontWeight: FontWeight.w500,
@@ -376,16 +376,26 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
         child: Row(
           children: [
             if (_listeningState == ListeningState.finished)
-              FloatingActionButton(
-                onPressed: _retryListening,
-                child: Icon(Icons.refresh),
-                shape: CircleBorder(),
+              SizedBox(
+                width: 60,
+                height: 60,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    // 새로고침 버튼이 클릭되었을 때 실행될 코드를 여기에 작성합니다.
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50.0),
+                  ),
+                  backgroundColor: Colors.blue,
+                  elevation: 0,
+                  child: const Icon(Icons.refresh, color: Colors.white),
+                ),
               )
             else
-              SizedBox(),
+              const SizedBox(),
             const SizedBox(width: 16),
             IconToggleButton(
-              toggleColor: Color(0xFF3787FF),
+              toggleColor: const Color(0xFF3787FF),
               icon: _getListeningIcon(),
               label: _getListeningLabel(),
               isToggled: _listeningState == ListeningState.listening,
@@ -402,7 +412,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
 class ChangeWord extends StatefulWidget {
   final String answer;
 
-  ChangeWord({Key? key, required this.answer}) : super(key: key);
+  const ChangeWord({Key? key, required this.answer}) : super(key: key);
 
   @override
   _ChangeWordState createState() => _ChangeWordState();
@@ -418,7 +428,7 @@ class _ChangeWordState extends State<ChangeWord> {
     "화장실이": ["가까운 역이", "픽업대가", "나가는 길"]
   };
   TextEditingController? _editingController = TextEditingController();
-  FocusNode? _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
 
   OverlayEntry? _overlayEntry;
   String? _currentOverlayWord;
@@ -438,7 +448,7 @@ class _ChangeWordState extends State<ChangeWord> {
   @override
   void dispose() {
     _editingController?.dispose();
-    _focusNode?.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -475,7 +485,7 @@ class _ChangeWordState extends State<ChangeWord> {
     // 새로운 오버레이를 생성하고 표시
     _overlayEntry =
         _createOverlayEntry(context, options, position, renderBox.size, word);
-    Overlay.of(context)?.insert(_overlayEntry!);
+    Overlay.of(context).insert(_overlayEntry!);
   }
 
   void _closeOverlayMenu() {
@@ -507,7 +517,7 @@ class _ChangeWordState extends State<ChangeWord> {
             children: [
               ...options.map((String option) {
                 return Container(
-                  margin: EdgeInsets.only(bottom: 20),
+                  margin: const EdgeInsets.only(bottom: 20),
                   child: WordReplacementButton(
                     label: option,
                     isSelected: false,
@@ -526,8 +536,8 @@ class _ChangeWordState extends State<ChangeWord> {
                   Container(
                     width: 120,
                     height: 50,
-                    margin: EdgeInsets.only(bottom: 20),
-                    padding: EdgeInsets.only(left: 20, right: 20),
+                    margin: const EdgeInsets.only(bottom: 20),
+                    padding: const EdgeInsets.only(left: 20, right: 20),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(100),
@@ -536,14 +546,14 @@ class _ChangeWordState extends State<ChangeWord> {
                           color: Colors.grey.withOpacity(0.2),
                           spreadRadius: 5,
                           blurRadius: 15,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
                     child: TextField(
                       controller: _editingController,
                       focusNode: _focusNode,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: "직접 추가",
                         border: InputBorder.none,
                       ),
@@ -560,12 +570,12 @@ class _ChangeWordState extends State<ChangeWord> {
                             color: Colors.grey.withOpacity(0.2),
                             spreadRadius: 5,
                             blurRadius: 15,
-                            offset: Offset(0, 3),
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
                       child: IconButton(
-                        icon: Icon(Icons.check),
+                        icon: const Icon(Icons.check),
                         onPressed: () {
                           setState(() {
                             // 직접 추가한 단어로 교체
@@ -612,7 +622,7 @@ class _ChangeWordState extends State<ChangeWord> {
               }
             },
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
               child: Text(
                 word,
                 style: TextStyle(
