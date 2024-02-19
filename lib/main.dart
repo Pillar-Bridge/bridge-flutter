@@ -20,7 +20,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       theme: AppThemeData.basicThemeData,
       title: 'Bridge',
-      initialRoute: '/common_widget_test',
+      initialRoute: '/',
       routes: {
         '/': (context) => const SelectPlaceScreen(),
         '/stt': (context) => SttTestScreen(),

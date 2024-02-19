@@ -10,13 +10,19 @@ class ApiClient {
   ApiClient({http.Client? client}) : httpClient = client ?? http.Client();
 
   Future<dynamic> _sendRequest(String url,
-      {String method = 'POST', Map<String, dynamic>? body}) async {
+      {String method = 'GET', Map<String, dynamic>? body}) async {
     String token = await TokenManager.getToken();
 
     var uri = Uri.parse('$baseUrl$url');
     http.Response response;
 
-    if (method.toUpperCase() == 'POST') {
+    if (method.toUpperCase() == 'GET') {
+      uri = Uri.parse('$uri?${_mapToQueryParameters(body)}');
+      response = await httpClient.get(
+        uri,
+        headers: {'Content-Type': 'application/json', 'UUID': token},
+      );
+    } else if (method.toUpperCase() == 'POST') {
       response = await httpClient.post(
         uri,
         headers: {'Content-Type': 'application/json', 'UUID': token},
@@ -40,10 +46,20 @@ class ApiClient {
     }
   }
 
+  String _mapToQueryParameters(Map<String, dynamic>? params) {
+    if (params == null || params.isEmpty) {
+      return '';
+    }
+
+    return params.entries
+        .map((entry) => '${entry.key}=${entry.value}')
+        .join('&');
+  }
+
   Future<List<PlaceRecommendation>> getPlaceRecommendations(
       double latitude, double longitude) async {
     final jsonResponse = await _sendRequest('/places/recommendations',
-        body: {'latitude': latitude, 'longitude': longitude});
+        method: 'GET', body: {'latitude': latitude, 'longitude': longitude});
 
     List<PlaceRecommendation> placeRecommendations =
         (jsonResponse['data']['documents'] as List)
