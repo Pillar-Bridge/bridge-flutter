@@ -1,20 +1,27 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class FullScreenTextWidget extends StatelessWidget {
+class FullScreenTextWidget extends StatefulWidget {
   final String text;
   const FullScreenTextWidget({Key? key, required this.text}) : super(key: key);
 
   @override
+  _FullScreenTextWidgetState createState() => _FullScreenTextWidgetState();
+}
+
+class _FullScreenTextWidgetState extends State<FullScreenTextWidget> {
+  @override
   Widget build(BuildContext context) {
-    return Center(
-      // 화면 중앙에 위치시킵니다.
-      child: FittedBox(
-        // 자식 위젯의 크기를 부모 위젯의 크기에 맞게 조절합니다.
-        fit: BoxFit.cover, // 전체 화면을 꽉 채우도록 조절합니다.
-        child: Text(
-          text,
-          style: const TextStyle(
-              fontSize: 20), // 기본 텍스트 크기를 설정합니다. FittedBox가 조절할 것입니다.
+    // 여기에 가로 모드로 보여질 위젯의 레이아웃을 구현합니다.
+    return Scaffold(
+      body: Center(
+        child: AutoSizeText(
+          widget.text,
+          style: const TextStyle(fontSize: 120),
+          minFontSize: 20, // 최소 폰트 사이즈
+          maxLines: 2, // 최대 줄 수
+          overflow: TextOverflow.ellipsis, // 오버플로 처리
         ),
       ),
     );
