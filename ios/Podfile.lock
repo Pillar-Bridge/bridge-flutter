@@ -1,6 +1,10 @@
 PODS:
+  - audio_session (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - geolocator_apple (1.2.0):
+    - Flutter
+  - just_audio (0.0.1):
     - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
@@ -17,8 +21,10 @@ PODS:
   - Try (2.1.1)
 
 DEPENDENCIES:
+  - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - Flutter (from `Flutter`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
+  - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - record_darwin (from `.symlinks/plugins/record_darwin/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
@@ -29,10 +35,14 @@ SPEC REPOS:
     - Try
 
 EXTERNAL SOURCES:
+  audio_session:
+    :path: ".symlinks/plugins/audio_session/ios"
   Flutter:
     :path: Flutter
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
+  just_audio:
+    :path: ".symlinks/plugins/just_audio/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   record_darwin:
@@ -43,8 +53,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/speech_to_text/ios"
 
 SPEC CHECKSUMS:
+  audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   geolocator_apple: 9157311f654584b9bb72686c55fc02a97b73f461
+  just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
   record_darwin: 1f6619f2abac4d1ca91d3eeab038c980d76f1517
   shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695

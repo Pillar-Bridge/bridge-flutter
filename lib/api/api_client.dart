@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:bridge_flutter/api/responses/res_%08replies.dart';
 import 'package:bridge_flutter/api/responses/res_dialogue.dart';
 import 'package:bridge_flutter/api/responses/res_message_dialogue.dart';
 import 'package:bridge_flutter/api/responses/res_place_recommendation.dart';
 import 'package:bridge_flutter/utils/token_manager.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class ApiClient {
   final String baseUrl = 'http://54.66.101.3:8080';
@@ -137,5 +139,33 @@ class ApiClient {
     }
 
     return alternatives;
+  }
+
+  Future<File> convertTextToSpeech(
+      String text, String lang, String type) async {
+    final url = Uri.parse('$baseUrl/convert');
+    final response = await http.post(url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'text': text,
+          'lang': lang,
+          'type': type,
+        }));
+
+    if (response.statusCode == 200) {
+      // 임시 디렉토리 경로를 얻습니다.
+      final directory = await getTemporaryDirectory();
+      final filePath = '${directory.path}/audio.mp3';
+      print(filePath);
+
+      // 응답으로 받은 바이너리 데이터를 파일로 저장합니다.
+      final file = File(filePath);
+      await file.writeAsBytes(response.bodyBytes);
+      return file;
+    } else {
+      throw Exception('Failed to convert text to speech');
+    }
   }
 }

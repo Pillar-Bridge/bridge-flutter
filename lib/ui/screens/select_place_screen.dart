@@ -47,35 +47,43 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
       _isLoading = true; // API 호출 시작 시 로딩 상태로 설정
     });
 
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    // 실제 위치 정보를 사용하여 API 호출
-    var result = await apiClient.getPlaceRecommendations(
-        position.latitude, position.longitude);
-    List<String> categories;
-    if (result.isNotEmpty) {
-      categories = result
-          .map((recommendation) =>
-              recommendation.categoryGroupName?.replaceAll("_", " "))
-          .where((category) => category != null) // Filter out null values
-          .map((category) => category!
-              .split(' ')
-              .map((word) => word[0].toUpperCase() + word.substring(1))
-              .join(' ')) // Capitalize first letter of each word
-          .map((category) => category
-              .split(' ')
-              .map((word) => word[0].toUpperCase() + word.substring(1))
-              .join(' ')) // Capitalize first letter of each word
-          .map((recommendation) => recommendation.replaceAll(" ", ""))
-          .toSet()
-          .toList();
-    } else {
-      categories = ['영화관(예시)', '카페(예시)', '도서관(예시)']; // 예시 데이터
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      // 실제 위치 정보를 사용하여 API 호출
+      var result = await apiClient.getPlaceRecommendations(
+          position.latitude, position.longitude);
+      List<String> categories;
+      if (result.isNotEmpty) {
+        categories = result
+            .map((recommendation) =>
+                recommendation.categoryGroupName?.replaceAll("_", " "))
+            .where((category) => category != null) // Filter out null values
+            .map((category) => category!
+                .split(' ')
+                .map((word) => word[0].toUpperCase() + word.substring(1))
+                .join(' ')) // Capitalize first letter of each word
+            .map((category) => category
+                .split(' ')
+                .map((word) => word[0].toUpperCase() + word.substring(1))
+                .join(' ')) // Capitalize first letter of each word
+            .map((recommendation) => recommendation.replaceAll(" ", ""))
+            .toSet()
+            .toList();
+      } else {
+        categories = ['영화관(예시)', '카페(예시)', '도서관(예시)']; // 예시 데이터
+      }
+      setState(() {
+        recommendations = categories;
+        _isLoading = false; // 데이터 로딩 완료
+      });
+    } catch (e) {
+      List<String> categories = ['영화관(예시)', '카페(예시)', '도서관(예시)']; // 예시 데이터
+      setState(() {
+        recommendations = categories;
+        _isLoading = false; // 데이터 로딩 완료
+      });
     }
-    setState(() {
-      recommendations = categories;
-      _isLoading = false; // 데이터 로딩 완료
-    });
   }
 
   void _navigateToVoiceRecognitionScreen() async {

@@ -1,4 +1,5 @@
 import 'package:bridge_flutter/ui/screens/TestScreen.dart';
+import 'package:bridge_flutter/ui/screens/full_text_screen.dart';
 import 'package:bridge_flutter/ui/screens/select_answer_screen.dart';
 import 'package:bridge_flutter/ui/screens/select_place_screen.dart';
 import 'package:bridge_flutter/ui/screens/stt_test_screen.dart';
@@ -23,7 +24,7 @@ class MainApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const SelectPlaceScreen(),
-        '/stt': (context) => SttTestScreen(),
+        '/stt': (context) => const SttTestScreen(),
         '/voice': (context) => const VoiceRecognitionScreen(
               dialogueId: "",
             ),
@@ -34,6 +35,7 @@ class MainApp extends StatelessWidget {
             ),
         '/common_widget_test': (context) => CommonWidgetScreen(),
         '/test': (context) => MyApp(),
+        '/text': (context) => const FullScreenTextWidget(),
       },
     );
   }

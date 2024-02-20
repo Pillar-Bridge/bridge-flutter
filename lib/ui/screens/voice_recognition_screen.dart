@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bridge_flutter/api/api_client.dart';
 import 'package:bridge_flutter/api/responses/res_dialogue.dart';
@@ -12,6 +13,7 @@ import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_word_replacement.dart';
 import 'package:bridge_flutter/ui/widgets/progresses/progress_threedots.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 enum ConversationState { TURN_PARTNER, TURN_USER }
@@ -40,6 +42,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
   List<String> conversationList = [];
   List<String> _unselectedSentences = [];
   String? _tempMessageSentYet;
+  late AudioPlayer _audioPlayer;
 
   Dialogue? _dialogue;
   void updateDialogue() {
@@ -60,6 +63,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
   void initState() {
     super.initState();
     _speechToText = stt.SpeechToText();
+    _audioPlayer = AudioPlayer();
   }
 
   // 직접 입력한 문장을 처리하는 함수
@@ -80,6 +84,17 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
       });
       print('conversationList: ${conversationList.join(', ')}');
     }
+  }
+
+  Future<void> playAudio(File audioFile) async {
+    await _audioPlayer.setFilePath(audioFile.path);
+    _audioPlayer.play();
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
   }
 
   // 답변 제안 목록 중 문장을 선택했을 때 호출되는 함수
@@ -300,15 +315,29 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                       Row(
                                         children: [
                                           IconButton(
-                                            onPressed: () {
-                                              // TODO: 유저의 답변을 읽어주는 api 호출 및 음성 출력 기능 구현
+                                            onPressed: () async {
+                                              ApiClient()
+                                                  .convertTextToSpeech(
+                                                      conversationList.last,
+                                                      "en-US",
+                                                      "en-US-Standard-A")
+                                                  .then((value) =>
+                                                      {playAudio(value)});
                                             },
                                             icon: const Icon(Icons.headset,
                                                 color: Colors.grey),
                                           ),
                                           IconButton(
                                             onPressed: () {
-                                              // TODO: dialog를 통해서 화면 전체로 크게 텍스트를 표시하는 기능 구현
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      VoiceSettingScreen(
+                                                          conversationList
+                                                              .last),
+                                                ),
+                                              );
                                             },
                                             icon: const Icon(Icons.tablet,
                                                 color: Colors.grey),
@@ -553,6 +582,14 @@ class _ChangeWordState extends State<ChangeWord> {
     super.initState();
     words = widget.answer.split(' ');
     _editingController = TextEditingController();
+
+    print(widget.answer);
+    ApiClient().getModificationOptions(widget.answer).then((value) => {
+          setState(() {
+            print(value);
+            alternatives = value;
+          })
+        });
   }
 
   void _printAlternatives() {
