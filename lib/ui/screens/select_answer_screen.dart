@@ -1,4 +1,5 @@
 import 'package:bridge_flutter/ui/widgets/buttons/button_basic_icon.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_current_situation.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_select_sentence.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_text.dart';
 import 'package:flutter/material.dart';
@@ -6,10 +7,13 @@ import 'package:flutter/material.dart';
 class SelectAnswerScreen extends StatefulWidget {
   final List<String> conversationList;
   final List<String> recommendedSentences;
+  final String? situation;
+
   const SelectAnswerScreen(
       {super.key,
       required this.conversationList,
-      required this.recommendedSentences});
+      required this.recommendedSentences,
+      this.situation});
 
   @override
   State<SelectAnswerScreen> createState() => _SelectAnswerScreenState();
@@ -181,6 +185,12 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                 ),
               ),
             ),
+            Positioned(
+                top: 6,
+                right: 28,
+                child: CurrentSituationButton(
+                  situation: widget.situation ?? '',
+                ))
           ],
         ),
       ),

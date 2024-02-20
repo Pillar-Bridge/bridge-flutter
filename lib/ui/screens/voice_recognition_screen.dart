@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:bridge_flutter/api/api_client.dart';
+import 'package:bridge_flutter/api/responses/res_dialogue.dart';
 import 'package:bridge_flutter/controllers/voice_recorder.dart';
 import 'package:bridge_flutter/ui/screens/select_answer_screen.dart';
 import 'package:bridge_flutter/ui/screens/voice_setting_screen.dart';
+import 'package:bridge_flutter/ui/widgets/buttons/button_current_situation.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_select_sentence.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_suggestion_sentence.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
@@ -11,6 +13,8 @@ import 'package:bridge_flutter/ui/widgets/buttons/button_word_replacement.dart';
 import 'package:bridge_flutter/ui/widgets/progresses/progress_threedots.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+
+enum ConversationState { TURN_PARTNER, TURN_USER }
 
 enum ListeningState { ready, listening, finished }
 
@@ -25,11 +29,26 @@ class VoiceRecognitionScreen extends StatefulWidget {
 
 class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
   String get dialogueId => widget.dialogueId;
+  String get situation =>
+      (_dialogue?.place ?? "") +
+      (_dialogue?.situation != null && _dialogue!.situation.isNotEmpty
+          ? ", ${_dialogue?.situation}"
+          : "");
   ApiClient apiClient = ApiClient(); // ApiClient 인스턴스 생성
   ListeningState _listeningState = ListeningState.ready;
+  ConversationState _conversationState = ConversationState.TURN_PARTNER;
   List<String> conversationList = [];
   List<String> _unselectedSentences = [];
   String? _tempMessageSentYet;
+
+  Dialogue? _dialogue;
+  void updateDialogue() {
+    apiClient.getDialogue(dialogueId).then((dialogue) {
+      setState(() {
+        _dialogue = dialogue;
+      });
+    });
+  }
 
   bool _isAnalyzing = false;
 
@@ -132,12 +151,17 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
 
   // SelectAnswerScreen으로 이동하는 함수
   void _navigateToSelectAnswerScreen(List<String> recommendedSentences) async {
+    setState(() {
+      _conversationState = ConversationState.TURN_USER;
+    });
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => SelectAnswerScreen(
-            conversationList: conversationList,
-            recommendedSentences: recommendedSentences),
+          conversationList: conversationList,
+          recommendedSentences: recommendedSentences,
+          situation: situation,
+        ),
       ),
     );
 
@@ -177,6 +201,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
   }
 
   void _toggleListeningState() async {
+    _conversationState = ConversationState.TURN_PARTNER;
     if (_tempMessageSentYet != null) {
       await apiClient.createMessage(
           dialogueId, _tempMessageSentYet!, 'user', 'en');
@@ -201,6 +226,8 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
       });
 
       await apiClient.createMessage(dialogueId, _text, 'partner', 'en');
+
+      updateDialogue();
 
       final conversations = await apiClient.getRecommendReplies(dialogueId);
 
@@ -234,213 +261,201 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                 )
               : null,
         ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 24, right: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+        child: SizedBox(
+          width: double.infinity,
+          child: SafeArea(
+            child: Stack(children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 24, right: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.more_horiz),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const VoiceSettingScreen()),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                _isAnalyzing
-                    ? ProgressThreeDots()
-                    : Expanded(
-                        child: _listeningState == ListeningState.ready &&
-                                conversationList.isNotEmpty
-                            // 대화 목록이 있을 때 마지막 대화를 표시
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  if (conversationList.length > 1)
-                                    // 음성인식 된 내용
-                                    Text(
-                                      conversationList[
-                                          conversationList.length - 2],
-                                      style: TextStyle(
-                                        color: Colors.grey[300],
-                                        fontSize: 40,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  if (conversationList.isNotEmpty)
-                                    // 선택한 답변
-                                    ChangeWord(answer: conversationList.last),
-                                  const SizedBox(height: 10),
-                                  Row(
+                    const SizedBox(height: 18),
+                    _isAnalyzing
+                        ? ProgressThreeDots()
+                        : Expanded(
+                            child: _listeningState == ListeningState.ready &&
+                                    conversationList.isNotEmpty
+                                // 대화 목록이 있을 때 마지막 대화를 표시
+                                ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(
-                                        width: 30,
-                                        height: 30,
-                                        child: FloatingActionButton(
-                                          onPressed: () {
-                                            // TODO: 유저의 답변을 읽어주는 api 호출 및 음성 출력 기능 구현
-                                          },
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(50.0),
-                                          ),
-                                          backgroundColor: Colors.white,
-                                          elevation: 0,
-                                          child: const Icon(Icons.headset,
-                                              color: Colors.grey),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      SizedBox(
-                                        width: 30,
-                                        height: 30,
-                                        child: FloatingActionButton(
-                                          onPressed: () {
-                                            // TODO: dialog를 통해서 화면 전체로 크게 텍스트를 표시하는 기능 구현
-                                          },
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(50.0),
-                                          ),
-                                          backgroundColor: Colors.white,
-                                          elevation: 0,
-                                          child: const Icon(Icons.tablet,
-                                              color: Colors.grey),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 40),
-                                    child: Text(
-                                        '⚑  ${_unselectedSentences.length}개의 다른 답변 제안',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey[500])),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 20),
-                                    child: SizedBox(
-                                      height: 60, // 버튼의 높이에 맞춰 조절
-                                      child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: _unselectedSentences.length,
-                                        itemBuilder: (context, index) {
-                                          return Container(
-                                            margin: const EdgeInsets.only(
-                                                right: 8), // 버튼 사이의 간격 조절
-                                            child: SuggestionSentenceButton(
-                                              label:
-                                                  _unselectedSentences[index],
-                                              onPressed: () {
-                                                _selectUnselectedSentence(
-                                                    _unselectedSentences[
-                                                        index]);
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      // 직접 추가한 답변을 입력하는 텍스트 필드
-                                      Expanded(
-                                        child: Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 20),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 40),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            border: Border.all(
-                                                color: const Color(0xFFF5F5F5)),
-                                            borderRadius:
-                                                BorderRadius.circular(100),
-                                          ),
-                                          child: SingleChildScrollView(
-                                            scrollDirection: Axis.vertical,
-                                            reverse: true,
-                                            child: TextField(
-                                              controller: _editingController,
-                                              maxLines: null,
-                                              decoration: const InputDecoration(
-                                                hintText: "직접 추가",
-                                                border: InputBorder.none,
-                                              ),
-                                              showCursor: false,
-                                              style: const TextStyle(
-                                                color: Color(0xff595959),
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
+                                      if (conversationList.length > 1)
+                                        // 음성인식 된 내용
+                                        Text(
+                                          conversationList[
+                                              conversationList.length - 2],
+                                          style: TextStyle(
+                                            color: Colors.grey[300],
+                                            fontSize: 40,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
+                                      if (conversationList.isNotEmpty)
+                                        // 선택한 답변
+                                        ChangeWord(
+                                            answer: conversationList.last),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            onPressed: () {
+                                              // TODO: 유저의 답변을 읽어주는 api 호출 및 음성 출력 기능 구현
+                                            },
+                                            icon: const Icon(Icons.headset,
+                                                color: Colors.grey),
+                                          ),
+                                          IconButton(
+                                            onPressed: () {
+                                              // TODO: dialog를 통해서 화면 전체로 크게 텍스트를 표시하는 기능 구현
+                                            },
+                                            icon: const Icon(Icons.tablet,
+                                                color: Colors.grey),
+                                          ),
+                                        ],
                                       ),
-                                      // 직접 추가한 답변을 저장하는 버튼
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 10, bottom: 20),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                                color: const Color(0xFFF5F5F5)),
-                                          ),
-                                          child: IconButton(
-                                            icon: const Icon(Icons.check),
-                                            onPressed: _handleDirectInput,
-                                            color: Colors.blue,
-                                            iconSize: 24,
+                                        padding: const EdgeInsets.only(top: 40),
+                                        child: Text(
+                                            '⚑  ${_unselectedSentences.length}개의 다른 답변 제안',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.grey[500])),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 20),
+                                        child: SizedBox(
+                                          height: 60, // 버튼의 높이에 맞춰 조절
+                                          child: ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount:
+                                                _unselectedSentences.length,
+                                            itemBuilder: (context, index) {
+                                              return Container(
+                                                margin: const EdgeInsets.only(
+                                                    right: 8), // 버튼 사이의 간격 조절
+                                                child: SuggestionSentenceButton(
+                                                  label: _unselectedSentences[
+                                                      index],
+                                                  onPressed: () {
+                                                    _selectUnselectedSentence(
+                                                        _unselectedSentences[
+                                                            index]);
+                                                  },
+                                                ),
+                                              );
+                                            },
                                           ),
                                         ),
                                       ),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          // 직접 추가한 답변을 입력하는 텍스트 필드
+                                          Expanded(
+                                            child: Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 20),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 40),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                border: Border.all(
+                                                    color: const Color(
+                                                        0xFFF5F5F5)),
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                              ),
+                                              child: SingleChildScrollView(
+                                                scrollDirection: Axis.vertical,
+                                                reverse: true,
+                                                child: TextField(
+                                                  controller:
+                                                      _editingController,
+                                                  maxLines: null,
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    hintText: "직접 추가",
+                                                    border: InputBorder.none,
+                                                  ),
+                                                  showCursor: false,
+                                                  style: const TextStyle(
+                                                    color: Color(0xff595959),
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          // 직접 추가한 답변을 저장하는 버튼
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 10, bottom: 20),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                    color: const Color(
+                                                        0xFFF5F5F5)),
+                                              ),
+                                              child: IconButton(
+                                                icon: const Icon(Icons.check),
+                                                onPressed: _handleDirectInput,
+                                                color: Colors.blue,
+                                                iconSize: 24,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
                                     ],
                                   )
-                                ],
-                              )
-                            // 대화 목록이 없을 때 처음 안내 문구 표시
-                            : Text(
-                                _listeningState == ListeningState.ready
-                                    ? '상대방의 말이 이곳에 표시됩니다.'
-                                    : _listeningState ==
-                                            ListeningState.listening
-                                        ? _text.isNotEmpty
-                                            ? _text
-                                            : '말씀해주세요...'
+                                // 대화 목록이 없을 때 처음 안내 문구 표시
+                                : Text(
+                                    _listeningState == ListeningState.ready
+                                        ? '상대방의 말이 이곳에 표시됩니다.'
                                         : _listeningState ==
-                                                ListeningState.finished
+                                                ListeningState.listening
                                             ? _text.isNotEmpty
                                                 ? _text
                                                 : '말씀해주세요...'
-                                            : 'Present text speak now',
-                                style: TextStyle(
-                                  color: _text.isEmpty
-                                      ? Colors.grey[300]
-                                      : _listeningState == ListeningState.ready
-                                          ? const Color(0xFFB4B4B4)
-                                          : null,
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                      ),
-              ],
-            ),
+                                            : _listeningState ==
+                                                    ListeningState.finished
+                                                ? _text.isNotEmpty
+                                                    ? _text
+                                                    : '말씀해주세요...'
+                                                : 'Present text speak now',
+                                    style: TextStyle(
+                                      color: _text.isEmpty
+                                          ? Colors.grey[300]
+                                          : _listeningState ==
+                                                  ListeningState.ready
+                                              ? const Color(0xFFB4B4B4)
+                                              : null,
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                          ),
+                  ],
+                ),
+              ),
+              Positioned(
+                  top: 6,
+                  right: 28,
+                  child: Visibility(
+                    visible: _conversationState == ConversationState.TURN_USER,
+                    child: CurrentSituationButton(
+                      situation: situation,
+                    ),
+                  ))
+            ]),
           ),
         ),
       ),
@@ -515,6 +530,14 @@ class _ChangeWordState extends State<ChangeWord> {
       setState(() {
         words = widget.answer.split(' ');
       });
+
+      print(widget.answer);
+      ApiClient().getModificationOptions(widget.answer).then((value) => {
+            setState(() {
+              print(value);
+              alternatives = value;
+            })
+          });
     }
   }
 
