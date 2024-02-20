@@ -35,7 +35,7 @@ class MainApp extends StatelessWidget {
             ),
         '/common_widget_test': (context) => CommonWidgetScreen(),
         '/test': (context) => MyApp(),
-        '/text': (context) => const FullScreenTextWidget(),
+        '/text': (context) => const FullScreenTextWidget(text: "Hello World!"),
       },
     );
   }

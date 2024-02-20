@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bridge_flutter/api/api_client.dart';
 import 'package:bridge_flutter/api/responses/res_dialogue.dart';
 import 'package:bridge_flutter/controllers/voice_recorder.dart';
+import 'package:bridge_flutter/ui/screens/full_text_screen.dart';
 import 'package:bridge_flutter/ui/screens/select_answer_screen.dart';
 import 'package:bridge_flutter/ui/screens/voice_setting_screen.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_current_situation.dart';
@@ -333,8 +334,8 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      VoiceSettingScreen(
-                                                          conversationList
+                                                      FullScreenTextWidget(
+                                                          text: conversationList
                                                               .last),
                                                 ),
                                               );

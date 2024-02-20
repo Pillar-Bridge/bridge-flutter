@@ -2,7 +2,7 @@ import 'package:bridge_flutter/ui/widgets/buttons/button_basic.dart';
 import 'package:flutter/material.dart';
 
 class VoiceSettingScreen extends StatefulWidget {
-  const VoiceSettingScreen(String last, {super.key});
+  const VoiceSettingScreen({super.key});
 
   @override
   State<VoiceSettingScreen> createState() => _VoiceSettingScreenState();
