@@ -14,6 +14,7 @@ import 'package:bridge_flutter/ui/widgets/buttons/button_toggle_icon.dart';
 import 'package:bridge_flutter/ui/widgets/buttons/button_word_replacement.dart';
 import 'package:bridge_flutter/ui/widgets/progresses/progress_threedots.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
@@ -216,6 +217,22 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
     }
   }
 
+  void _setLandscapeMode() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
+  }
+
+  void _resetOrientation() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
+  }
+
   void _toggleListeningState() async {
     _conversationState = ConversationState.TURN_PARTNER;
     if (_tempMessageSentYet != null) {
@@ -329,8 +346,9 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                                 color: Colors.grey),
                                           ),
                                           IconButton(
-                                            onPressed: () {
-                                              Navigator.push(
+                                            onPressed: () async {
+                                              _setLandscapeMode();
+                                              await Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
@@ -339,6 +357,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                                               .last),
                                                 ),
                                               );
+                                              _resetOrientation();
                                             },
                                             icon: const Icon(Icons.tablet,
                                                 color: Colors.grey),
