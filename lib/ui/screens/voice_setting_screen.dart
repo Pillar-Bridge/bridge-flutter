@@ -91,13 +91,14 @@ class _VoiceSettingScreenState extends State<VoiceSettingScreen> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(top: 16, bottom: 26),
+                              padding:
+                                  const EdgeInsets.only(top: 16, bottom: 26),
                               child: Text(
                                 '남성',
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: _selectedGender == '남성'
-                                      ? Color(0xFF3787FF)
+                                      ? const Color(0xFF3787FF)
                                       : Colors.grey,
                                 ),
                               ),
