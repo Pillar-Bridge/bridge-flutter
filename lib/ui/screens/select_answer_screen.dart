@@ -123,7 +123,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 20),
                       child: SelectSentenceButton(
-                        label: sentence,
+                        label: sentence.replaceAll('[', '').replaceAll(']', ''),
                         onPressed: () {
                           _onSentenceSelected(sentence);
                         },

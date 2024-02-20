@@ -558,7 +558,8 @@ class _ChangeWordState extends State<ChangeWord> {
     if (widget.answer != oldWidget.answer) {
       // 새로운 answer prop이 전달되면 words 상태를 업데이트합니다.
       setState(() {
-        words = widget.answer.split(' ');
+        words =
+            widget.answer.replaceAll('[', '').replaceAll(']', '').split(' ');
       });
 
       print(widget.answer);
@@ -581,7 +582,7 @@ class _ChangeWordState extends State<ChangeWord> {
   @override
   void initState() {
     super.initState();
-    words = widget.answer.split(' ');
+    words = widget.answer.replaceAll('[', '').replaceAll(']', '').split(' ');
     _editingController = TextEditingController();
 
     print(widget.answer);
@@ -630,7 +631,8 @@ class _ChangeWordState extends State<ChangeWord> {
   }
 
   void _replaceWord(String currentWord, String newWord) {
-    int index = words.indexOf(currentWord);
+    int index =
+        words.lastIndexWhere((element) => element.contains(currentWord));
     words[index] = newWord; // 선택한 단어로 교체
     print(alternatives);
     print(words.join(" "));
@@ -746,13 +748,30 @@ class _ChangeWordState extends State<ChangeWord> {
           final GlobalKey key = GlobalKey();
 
           // 대체 가능한 단어인지 확인
-          bool isReplaceable = alternatives.keys.contains(word);
+          bool isReplaceable =
+              alternatives.keys.where((key) => word.contains(key)).isNotEmpty;
 
           return GestureDetector(
             key: key,
             onTap: () {
               if (isReplaceable) {
-                _showOverlay(context, alternatives[word] ?? [], key, word);
+                String? matchingKey;
+
+                try {
+                  // 특정 단어에 포함된 첫 번째 키를 시도하여 찾습니다.
+                  matchingKey =
+                      alternatives.keys.firstWhere((key) => word.contains(key));
+                } catch (e) {
+                  // 일치하는 요소가 없으면 예외가 발생합니다.
+                  // 여기서는 matchingKey가 이미 null로 초기화되어 있으므로 추가 조치를 취하지 않아도 됩니다.
+                }
+
+// 일치하는 키가 있을 경우 해당 키의 값을 사용합니다.
+                final List<String> values =
+                    matchingKey != null ? alternatives[matchingKey]! : [];
+
+// _showOverlay 함수를 호출하며 찾아낸 값(또는 빈 리스트)을 전달합니다.
+                _showOverlay(context, values, key, word);
               }
             },
             child: Container(
