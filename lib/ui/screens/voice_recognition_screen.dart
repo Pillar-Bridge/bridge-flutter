@@ -207,11 +207,11 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
 
   String _getListeningLabel() {
     if (_listeningState == ListeningState.ready) {
-      return '듣기';
+      return 'Listen';
     } else if (_listeningState == ListeningState.listening) {
-      return '중지';
+      return 'Stop';
     } else if (_listeningState == ListeningState.finished) {
-      return '완료';
+      return 'Done';
     } else {
       return '';
     }
@@ -303,7 +303,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 80),
                     _isAnalyzing
                         ? ProgressThreeDots()
                         : Expanded(
@@ -367,7 +367,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                       Padding(
                                         padding: const EdgeInsets.only(top: 40),
                                         child: Text(
-                                            '⚑  ${_unselectedSentences.length}개의 다른 답변 제안',
+                                            '⚑  ${_unselectedSentences.length} additional answer suggestions',
                                             style: TextStyle(
                                                 fontSize: 14,
                                                 color: Colors.grey[500])),
@@ -381,12 +381,15 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                             itemCount:
                                                 _unselectedSentences.length,
                                             itemBuilder: (context, index) {
+                                              String labelWithoutBrackets =
+                                                  _unselectedSentences[index]
+                                                      .replaceAll('[', '')
+                                                      .replaceAll(']', '');
                                               return Container(
                                                 margin: const EdgeInsets.only(
                                                     right: 8), // 버튼 사이의 간격 조절
                                                 child: SuggestionSentenceButton(
-                                                  label: _unselectedSentences[
-                                                      index],
+                                                  label: labelWithoutBrackets,
                                                   onPressed: () {
                                                     _selectUnselectedSentence(
                                                         _unselectedSentences[
@@ -428,7 +431,7 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                                   maxLines: null,
                                                   decoration:
                                                       const InputDecoration(
-                                                    hintText: "직접 추가",
+                                                    hintText: "Type to add",
                                                     border: InputBorder.none,
                                                   ),
                                                   showCursor: false,
@@ -468,18 +471,18 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                 // 대화 목록이 없을 때 처음 안내 문구 표시
                                 : Text(
                                     _listeningState == ListeningState.ready
-                                        ? '상대방의 말이 이곳에 표시됩니다.'
+                                        ? '''The other person's words will be displayed here.'''
                                         : _listeningState ==
                                                 ListeningState.listening
                                             ? _text.isNotEmpty
                                                 ? _text
-                                                : '말씀해주세요...'
+                                                : 'Please speak...'
                                             : _listeningState ==
                                                     ListeningState.finished
                                                 ? _text.isNotEmpty
                                                     ? _text
-                                                    : '말씀해주세요...'
-                                                : 'Present text speak now',
+                                                    : 'Please speak...'
+                                                : 'Start speaking now',
                                     style: TextStyle(
                                       color: _text.isEmpty
                                           ? Colors.grey[300]
@@ -709,7 +712,7 @@ class _ChangeWordState extends State<ChangeWord> {
                       controller: _editingController,
                       focusNode: _focusNode,
                       decoration: const InputDecoration(
-                        hintText: "직접 추가",
+                        hintText: "Type to add",
                         border: InputBorder.none,
                       ),
                     ),

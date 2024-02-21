@@ -71,14 +71,25 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
             .toSet()
             .toList();
       } else {
-        categories = ['영화관(예시)', '카페(예시)', '도서관(예시)']; // 예시 데이터
+        categories = [
+          'Cinema (Example)',
+          'Cafe (Example)',
+          'Library (Example)'
+        ];
+        // 예시 데이터
       }
       setState(() {
         recommendations = categories;
         _isLoading = false; // 데이터 로딩 완료
       });
     } catch (e) {
-      List<String> categories = ['영화관(예시)', '카페(예시)', '도서관(예시)']; // 예시 데이터
+      List<String> categories = [
+        'Cinema (Example)',
+        'Cafe (Example)',
+        'Library (Example)'
+      ];
+
+      // 예시 데이터
       setState(() {
         recommendations = categories;
         _isLoading = false; // 데이터 로딩 완료
@@ -110,10 +121,10 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('직접 장소 입력하기'),
+          title: const Text('Enter a place directly'),
           content: TextField(
             controller: textEditingController,
-            decoration: const InputDecoration(hintText: "장소를 입력해주세요"),
+            decoration: const InputDecoration(hintText: "Please enter a place"),
           ),
           actions: <Widget>[
             TextButton(
@@ -123,7 +134,7 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('취소'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               style: TextButton.styleFrom(
@@ -136,7 +147,7 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                 Navigator.of(context).pop();
                 _navigateToVoiceRecognitionScreen();
               },
-              child: const Text('완료'),
+              child: const Text('Done'),
             ),
           ],
         );
@@ -156,7 +167,7 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                     CircularProgressIndicator(),
                     Padding(
                       padding: EdgeInsets.only(top: 20),
-                      child: Text('장소 추천 목록을 불러오는 중입니다...'),
+                      child: Text('Loading the list of recommended places...'),
                     ),
                   ],
                 ))
@@ -167,7 +178,7 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                       padding: const EdgeInsets.only(top: 200),
                       child: Center(
                         child: Container(
-                          width: 100, // Container의 너비를 100으로 설정
+                          width: 200, // Container의 너비를 100으로 설정
                           height: 25, // Container의 높이 설정
                           decoration: BoxDecoration(
                             color: Colors.grey[200], // 배경색을 grey[200]으로 설정
@@ -177,7 +188,7 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                           child: Center(
                             // Text를 Container 중앙에 배치
                             child: Text(
-                              '🤔지금 당신은',
+                              '🤔Right now, you are at',
                               style: TextStyle(
                                   fontSize: 14, color: Colors.grey[700]),
                             ),
@@ -191,7 +202,7 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                           child: Text(
                             selectedPlace.isNotEmpty
                                 ? selectedPlace
-                                : '어디에 있나요?', // 선택된 장소가 있으면 표시, 없으면 기본값 표시
+                                : 'Where are you?', // 선택된 장소가 있으면 표시, 없으면 기본값 표시
                             style: const TextStyle(
                                 fontSize: 40, fontWeight: FontWeight.bold),
                           ),
@@ -226,7 +237,8 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                     ),
                     const Padding(
                         padding: EdgeInsets.only(left: 30, right: 30, top: 20),
-                        child: Text('⚑ 위치기반 가장 가까운 장소 제안',
+                        child: Text(
+                            '⚑ Suggestion for the nearest places based on location',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey,
@@ -251,7 +263,7 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                       ),
                     ),
                     child: const Text(
-                      '➕ 직접 장소 입력하기',
+                      '➕ Enter a place directly',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 18,
@@ -265,14 +277,14 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                 const SizedBox(height: 10), // 위젯 간 간격 설정 (20px
                 BasicButton(
                   label: selectedPlace.isNotEmpty
-                      ? '선택한 장소로 시작하기'
-                      : '장소를 선택해주세요', // 버튼 라벨 조건부 설정
+                      ? 'Start with the selected place'
+                      : 'Please select a place', // 버튼 라벨 조건부 설정
                   onPressed: selectedPlace.isNotEmpty
                       ? () {
                           _navigateToVoiceRecognitionScreen();
                         }
                       : () {
-                          print('선택된 장소가 없습니다.');
+                          print('No place selected.');
                         }, // 선택된 장소가 없으면 버튼 비활성화
                 ),
               ],

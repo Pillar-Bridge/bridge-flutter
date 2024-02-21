@@ -90,9 +90,9 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Padding(
-                  padding: EdgeInsets.only(left: 24, top: 18),
+                  padding: EdgeInsets.only(left: 24, top: 60),
                   child: Text(
-                    '상대방의 말',
+                    'The Other Person\'s Words',
                     style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                 ),
@@ -102,7 +102,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                   child: Text(
                     widget.conversationList.isNotEmpty
                         ? widget.conversationList.last
-                        : "상대방의 말이 이곳에 표시됩니다.",
+                        : "The other person's words will be displayed here.",
                     style: TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.bold,
@@ -121,7 +121,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                 children: <Widget>[
                   for (var sentence in _sentences)
                     Padding(
-                      padding: const EdgeInsets.only(top: 20),
+                      padding: const EdgeInsets.only(top: 10),
                       child: SelectSentenceButton(
                         label: sentence.replaceAll('[', '').replaceAll(']', ''),
                         onPressed: () {
@@ -153,7 +153,7 @@ class _SelectAnswerScreenState extends State<SelectAnswerScreen> {
                                     color: Colors.white, size: 30),
                               )
                             : null,
-                        hintText: '직접입력',
+                        hintText: 'Type',
                         hintStyle: const TextStyle(color: Colors.white),
                       ),
                       onChanged: (text) {

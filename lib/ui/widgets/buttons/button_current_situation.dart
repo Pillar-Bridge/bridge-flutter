@@ -17,11 +17,11 @@ class CurrentSituationButton extends StatelessWidget {
             color: Colors.grey.withOpacity(0.2),
             spreadRadius: 5,
             blurRadius: 15, // 이 값을 늘려 그림자를 더 퍼지게 만듭니다.
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: IntrinsicWidth(
         child: Row(
           mainAxisAlignment:
@@ -31,10 +31,10 @@ class CurrentSituationButton extends StatelessWidget {
               crossAxisAlignment:
                   CrossAxisAlignment.start, // Align text to the left
               children: [
-                Row(
+                const Row(
                   children: [
                     Text(
-                      '💡상황인식',
+                      '💡Recognized Situation',
                       style: TextStyle(
                         color: Color(0xFF939393),
                         fontSize: 12,
@@ -42,10 +42,10 @@ class CurrentSituationButton extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Text(
                   situation,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xff000000),
                     fontSize: 18,
                   ),
