@@ -16,6 +16,7 @@ import 'package:bridge_flutter/ui/widgets/progresses/progress_threedots.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 enum ConversationState { TURN_PARTNER, TURN_USER }
@@ -233,6 +234,69 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
     ]);
   }
 
+  String getVoiceSettings(String gender, String age, String lang) {
+    String type = 'en-US-Wavenet-A';
+
+    // 여기서는 예시로 'en-US'와 'ko-KR'에 대한 설정만 제공합니다.
+    // 추가 언어를 지원하려면 이 로직을 확장하세요.
+    if (lang == 'en-US') {
+      if (gender == 'Male') {
+        switch (age) {
+          case 'Child':
+            type = 'en-US-Wavenet-A';
+            break;
+          case 'Youth':
+            type = 'en-US-Standard-A';
+            break;
+          case 'Adult':
+            type = 'en-US-Casual-K';
+            break;
+        }
+      } else {
+        // Female
+        switch (age) {
+          case 'Child':
+            type = 'en-US-Wavenet-H';
+            break;
+          case 'Youth':
+            type = 'en-US-Neural2-H';
+            break;
+          case 'Adult':
+            type = 'en-US-Standard-E';
+            break;
+        }
+      }
+    } else if (lang == 'ko-KR') {
+      if (gender == 'Male') {
+        switch (age) {
+          case 'Child':
+            type = 'ko-KR-Wavenet-D';
+            break;
+          case 'Youth':
+            type = 'ko-KR-Wavenet-C';
+            break;
+          case 'Adult':
+            type = 'ko-KR-Standard-C';
+            break;
+        }
+      } else {
+        // Female
+        switch (age) {
+          case 'Child':
+            type = 'ko-KR-Wavenet-A';
+            break;
+          case 'Youth':
+            type = 'ko-KR-Standard-D';
+            break;
+          case 'Adult':
+            type = 'ko-KR-Standard-B';
+            break;
+        }
+      }
+    }
+    return type;
+  }
+
   void _toggleListeningState() async {
     _conversationState = ConversationState.TURN_PARTNER;
     if (_tempMessageSentYet != null) {
@@ -334,11 +398,22 @@ class _VoiceRecognitionScreenState extends State<VoiceRecognitionScreen> {
                                         children: [
                                           IconButton(
                                             onPressed: () async {
+                                              final SharedPreferences prefs =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              String gender =
+                                                  prefs.getString('gender') ??
+                                                      'Male';
+                                              String age =
+                                                  prefs.getString('age') ??
+                                                      'Child';
+
                                               ApiClient()
                                                   .convertTextToSpeech(
                                                       conversationList.last,
                                                       "en-US",
-                                                      "en-US-Standard-A")
+                                                      getVoiceSettings(
+                                                          gender, age, 'en-US'))
                                                   .then((value) =>
                                                       {playAudio(value)});
                                             },

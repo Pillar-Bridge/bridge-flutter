@@ -42,7 +42,7 @@ class Dialogue {
     return Dialogue(
       dialogueId: json['dialogueId'],
       place: json['place'],
-      situation: json['situation'],
+      situation: json['situation'] ?? "",
       messages: messages,
     );
   }

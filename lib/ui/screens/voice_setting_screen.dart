@@ -1,5 +1,6 @@
 import 'package:bridge_flutter/ui/widgets/buttons/button_basic.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class VoiceSettingScreen extends StatefulWidget {
   const VoiceSettingScreen({super.key});
@@ -9,8 +10,30 @@ class VoiceSettingScreen extends StatefulWidget {
 }
 
 class _VoiceSettingScreenState extends State<VoiceSettingScreen> {
-  String _selectedGender = '남성';
-  String _selectedAge = '어린 아이';
+  String _selectedGender = 'Male';
+  String _selectedAge = 'Child';
+
+  // 설정을 로드합니다.
+  _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedGender = prefs.getString('selectedGender') ?? 'Male';
+      _selectedAge = prefs.getString('selectedAge') ?? 'Child';
+    });
+  }
+
+  Future<void> _saveSettings() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('gender', _selectedGender);
+    await prefs.setString('age', _selectedAge);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +56,7 @@ class _VoiceSettingScreenState extends State<VoiceSettingScreen> {
               const Padding(
                 padding: EdgeInsets.only(left: 24),
                 child: Text(
-                  '보이스톤 설정',
+                  'Voice Tone Setting',
                   style: TextStyle(
                       fontSize: 40,
                       color: Colors.black,
@@ -44,7 +67,7 @@ class _VoiceSettingScreenState extends State<VoiceSettingScreen> {
               const Padding(
                 padding: EdgeInsets.only(left: 24, top: 24),
                 child: Text(
-                  '성별',
+                  'Gender',
                   style: TextStyle(
                       fontSize: 14,
                       color: Colors.black,
@@ -64,20 +87,20 @@ class _VoiceSettingScreenState extends State<VoiceSettingScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            _selectedGender = '남성';
+                            _selectedGender = 'Male';
                           });
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                             side: BorderSide(
-                              color: _selectedGender == '남성'
+                              color: _selectedGender == 'Male'
                                   ? const Color(0xFF3787FF)
                                   : Colors.grey,
-                              width: _selectedGender == '남성' ? 2 : 1,
+                              width: _selectedGender == 'Male' ? 2 : 1,
                             ),
                           ),
-                          backgroundColor: _selectedGender == '남성'
+                          backgroundColor: _selectedGender == 'Male'
                               ? Colors.lightBlue[50]
                               : Colors.white,
                         ),
@@ -94,10 +117,10 @@ class _VoiceSettingScreenState extends State<VoiceSettingScreen> {
                               padding:
                                   const EdgeInsets.only(top: 16, bottom: 26),
                               child: Text(
-                                '남성',
+                                'Male',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: _selectedGender == '남성'
+                                  color: _selectedGender == 'Male'
                                       ? const Color(0xFF3787FF)
                                       : Colors.grey,
                                 ),
@@ -112,20 +135,20 @@ class _VoiceSettingScreenState extends State<VoiceSettingScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            _selectedGender = '여성';
+                            _selectedGender = 'Female';
                           });
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                             side: BorderSide(
-                              color: _selectedGender == '여성'
+                              color: _selectedGender == 'Female'
                                   ? const Color(0xFF3787FF)
                                   : Colors.grey,
-                              width: _selectedGender == '여성' ? 2 : 1,
+                              width: _selectedGender == 'Female' ? 2 : 1,
                             ),
                           ),
-                          backgroundColor: _selectedGender == '여성'
+                          backgroundColor: _selectedGender == 'Female'
                               ? Colors.lightBlue[50]
                               : Colors.white,
                         ),
@@ -142,10 +165,10 @@ class _VoiceSettingScreenState extends State<VoiceSettingScreen> {
                               padding:
                                   const EdgeInsets.only(top: 16, bottom: 26),
                               child: Text(
-                                '여성',
+                                'Female',
                                 style: TextStyle(
                                     fontSize: 16,
-                                    color: _selectedGender == '여성'
+                                    color: _selectedGender == 'Female'
                                         ? const Color(0xFF3787FF)
                                         : Colors.grey),
                               ),
@@ -163,7 +186,7 @@ class _VoiceSettingScreenState extends State<VoiceSettingScreen> {
               const Padding(
                 padding: EdgeInsets.only(left: 24, top: 24, bottom: 14),
                 child: Text(
-                  '연령',
+                  'Age',
                   style: TextStyle(
                       fontSize: 14,
                       color: Colors.black,
@@ -181,31 +204,31 @@ class _VoiceSettingScreenState extends State<VoiceSettingScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            _selectedAge = '어린 아이';
+                            _selectedAge = 'Child';
                           });
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                             side: BorderSide(
-                              color: _selectedAge == '어린 아이'
+                              color: _selectedAge == 'Child'
                                   ? const Color(0xFF3787FF)
                                   : Colors.grey,
-                              width: _selectedAge == '어린 아이' ? 2 : 1,
+                              width: _selectedAge == 'Child' ? 2 : 1,
                             ),
                           ),
-                          backgroundColor: _selectedAge == '어린 아이'
+                          backgroundColor: _selectedAge == 'Child'
                               ? Colors.lightBlue[50]
                               : Colors.white,
                         ),
                         child: Padding(
                           padding: const EdgeInsets.only(top: 16, bottom: 16),
                           child: Text(
-                            '어린 아이',
+                            'Child',
                             overflow: TextOverflow.visible,
                             style: TextStyle(
                                 fontSize: 14,
-                                color: _selectedAge == '어린 아이'
+                                color: _selectedAge == 'Child'
                                     ? const Color(0xFF3787FF)
                                     : Colors.grey), // Set text color to grey
                           ), // Set text color to grey
@@ -217,31 +240,31 @@ class _VoiceSettingScreenState extends State<VoiceSettingScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            _selectedAge = '활기찬 성인';
+                            _selectedAge = 'Young Adult';
                           });
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                             side: BorderSide(
-                              color: _selectedAge == '활기찬 성인'
+                              color: _selectedAge == 'Young Adult'
                                   ? const Color(0xFF3787FF)
                                   : Colors.grey,
-                              width: _selectedAge == '활기찬 성인' ? 2 : 1,
+                              width: _selectedAge == 'Young Adult' ? 2 : 1,
                             ),
                           ),
-                          backgroundColor: _selectedAge == '활기찬 성인'
+                          backgroundColor: _selectedAge == 'Young Adult'
                               ? Colors.lightBlue[50]
                               : Colors.white,
                         ),
                         child: Padding(
                           padding: const EdgeInsets.only(top: 16, bottom: 16),
                           child: Text(
-                            '활기찬 성인',
+                            'Young Adult',
                             overflow: TextOverflow.visible,
                             style: TextStyle(
                                 fontSize: 14,
-                                color: _selectedAge == '활기찬 성인'
+                                color: _selectedAge == 'Young Adult'
                                     ? const Color(0xFF3787FF)
                                     : Colors.grey), // Set text color to grey
                           ), // Set text color to grey
@@ -253,31 +276,31 @@ class _VoiceSettingScreenState extends State<VoiceSettingScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            _selectedAge = '지적인 중년';
+                            _selectedAge = 'Middle-aged';
                           });
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                             side: BorderSide(
-                              color: _selectedAge == '지적인 중년'
+                              color: _selectedAge == 'Middle-aged'
                                   ? const Color(0xFF3787FF)
                                   : Colors.grey,
-                              width: _selectedAge == '지적인 중년' ? 2 : 1,
+                              width: _selectedAge == 'Middle-aged' ? 2 : 1,
                             ),
                           ),
-                          backgroundColor: _selectedAge == '지적인 중년'
+                          backgroundColor: _selectedAge == 'Middle-aged'
                               ? Colors.lightBlue[50]
                               : Colors.white,
                         ),
                         child: Padding(
                           padding: const EdgeInsets.only(top: 16, bottom: 16),
                           child: Text(
-                            '지적인 중년',
+                            'Middle-aged',
                             overflow: TextOverflow.visible,
                             style: TextStyle(
                                 fontSize: 14,
-                                color: _selectedAge == '지적인 중년'
+                                color: _selectedAge == 'Middle-aged'
                                     ? const Color(0xFF3787FF)
                                     : Colors.grey), // Set text color to grey
                           ), // Set text color to grey
@@ -291,11 +314,14 @@ class _VoiceSettingScreenState extends State<VoiceSettingScreen> {
           ),
         ),
         bottomNavigationBar: Container(
-            margin: const EdgeInsets.only(left: 24, right: 24, bottom: 50),
-            child: BasicButton(
-                label: '선택한 장소로 시작하기',
-                onPressed: () {
-                  Navigator.pop(context);
-                })));
+          margin: const EdgeInsets.only(left: 24, right: 24, bottom: 50),
+          child: BasicButton(
+            label: 'Select Voice Tone',
+            onPressed: () async {
+              await _saveSettings(); // 설정 저장
+              Navigator.pop(context);
+            },
+          ),
+        ));
   }
 }

@@ -171,78 +171,109 @@ class _SelectPlaceScreenState extends State<SelectPlaceScreen> {
                     ),
                   ],
                 ))
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              : Stack(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 200),
-                      child: Center(
-                        child: Container(
-                          width: 200, // Container의 너비를 100으로 설정
-                          height: 25, // Container의 높이 설정
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200], // 배경색을 grey[200]으로 설정
-                            borderRadius:
-                                BorderRadius.circular(100), // 모서리 반경을 100으로 설정
-                          ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 200),
                           child: Center(
-                            // Text를 Container 중앙에 배치
-                            child: Text(
-                              '🤔Right now, you are at',
-                              style: TextStyle(
-                                  fontSize: 14, color: Colors.grey[700]),
+                            child: Container(
+                              width: 200, // Container의 너비를 100으로 설정
+                              height: 25, // Container의 높이 설정
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200], // 배경색을 grey[200]으로 설정
+                                borderRadius: BorderRadius.circular(
+                                    100), // 모서리 반경을 100으로 설정
+                              ),
+                              child: Center(
+                                // Text를 Container 중앙에 배치
+                                child: Text(
+                                  '🤔Right now, you are at',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.grey[700]),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Center(
-                          child: Text(
-                            selectedPlace.isNotEmpty
-                                ? selectedPlace
-                                : 'Where are you?', // 선택된 장소가 있으면 표시, 없으면 기본값 표시
-                            style: const TextStyle(
-                                fontSize: 40, fontWeight: FontWeight.bold),
-                          ),
-                        )),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(left: 24, right: 24, top: 200),
-                      child: SizedBox(
-                        height: 50, // 리스트 항목의 높이를 고정
-                        child: ListView.builder(
-                          itemCount: recommendations.length, // 리스트에 표시할 항목 수
-                          scrollDirection: Axis.horizontal, // 가로 스크롤 설정
-                          itemBuilder: (context, index) {
-                            final recommendation =
-                                recommendations[index]; // 현재 항목
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.only(right: 8), // 항목 간 간격
-                              child: TextToggleButton(
-                                isSelected: selectedPlace == recommendation,
-                                label: recommendation,
-                                onPressed: () {
-                                  setState(() {
-                                    selectedPlace = recommendation;
-                                  });
-                                },
+                        Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Center(
+                              child: Text(
+                                selectedPlace.isNotEmpty
+                                    ? selectedPlace
+                                    : 'Where are you?', // 선택된 장소가 있으면 표시, 없으면 기본값 표시
+                                style: const TextStyle(
+                                    fontSize: 40, fontWeight: FontWeight.bold),
                               ),
-                            );
-                          },
+                            )),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 24, right: 24, top: 200),
+                          child: SizedBox(
+                            height: 50, // 리스트 항목의 높이를 고정
+                            child: ListView.builder(
+                              itemCount:
+                                  recommendations.length, // 리스트에 표시할 항목 수
+                              scrollDirection: Axis.horizontal, // 가로 스크롤 설정
+                              itemBuilder: (context, index) {
+                                final recommendation =
+                                    recommendations[index]; // 현재 항목
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 8), // 항목 간 간격
+                                  child: TextToggleButton(
+                                    isSelected: selectedPlace == recommendation,
+                                    label: recommendation,
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedPlace = recommendation;
+                                      });
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                         ),
-                      ),
+                        const Padding(
+                            padding:
+                                EdgeInsets.only(left: 30, right: 30, top: 20),
+                            child: Text(
+                                '⚑ Suggestion for the nearest places based on location',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ))),
+                      ],
                     ),
-                    const Padding(
-                        padding: EdgeInsets.only(left: 30, right: 30, top: 20),
-                        child: Text(
-                            '⚑ Suggestion for the nearest places based on location',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ))),
+                    Align(
+                        alignment: Alignment.topRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              right: 20, top: 20), // 위치 조정
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF3787FF), // 배경색 설정
+                              borderRadius:
+                                  BorderRadius.circular(20), // 모서리 둥글기
+                            ),
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/voice_setting');
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.all(8), // 글자색 설정
+                                textStyle:
+                                    const TextStyle(fontSize: 14), // 텍스트 스타일 설정
+                              ),
+                              child: const Text("Voice Tone"),
+                            ),
+                          ),
+                        ))
                   ],
                 ),
         ),
